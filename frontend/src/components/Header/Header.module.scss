@@ -1,0 +1,12 @@
+.component {
+  width: 500px;
+
+  .toolbar {
+    display: flex;
+    justify-content: space-between;
+
+    .menuButton {
+      color: white;
+    }
+  }
+}
