@@ -3,9 +3,9 @@ import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
-import classes from './Header.module.scss'
 import { SwipeableDrawer } from '@material-ui/core';
 import MenuContent from './MenuContent';
+import classes from './Header.module.scss'
 
 const Header = ():JSX.Element => {
 
@@ -30,23 +30,23 @@ const Header = ():JSX.Element => {
 
     return (
         <div className={classes.component}>
-            <AppBar position="sticky">
+            <AppBar position="fixed">
                 <Toolbar className={classes.toolbar}>
                     <Typography variant="h6">
                         QuizApp
                     </Typography>
-                    <Button>
-                        <Button className={classes.menuButton} onClick={toggleDrawer("top", true)}>Menu</Button>
-                        <SwipeableDrawer
-                            anchor="top"
-                            open={state['top']}
-                            onClose={toggleDrawer("top", false)}
-                            onOpen={toggleDrawer("top", true)}
-                            disableBackdropTransition={!iOS} disableDiscovery={iOS}
-                        >
-                            <MenuContent />
-                        </SwipeableDrawer>
-                    </Button>
+                        <Button>
+                            <Button className={classes.menuButton} onClick={toggleDrawer("top", true)}>Menu</Button>
+                            <SwipeableDrawer
+                                anchor="top"
+                                open={state['top']}
+                                onClose={toggleDrawer("top", false)}
+                                onOpen={toggleDrawer("top", true)}
+                                disableBackdropTransition={!iOS} disableDiscovery={iOS}
+                            >
+                                <MenuContent />
+                            </SwipeableDrawer>
+                        </Button>
                 </Toolbar>
             </AppBar>
         </div>
