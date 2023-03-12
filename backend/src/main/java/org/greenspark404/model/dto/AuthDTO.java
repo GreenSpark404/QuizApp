@@ -3,7 +3,7 @@ package org.greenspark404.model.dto;
 import lombok.Data;
 
 @Data
-public class CredentialDTO {
+public class AuthDTO {
     private String username;
     private String password;
 }

@@ -7,6 +7,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
@@ -22,7 +23,7 @@ public class JwtTokenProvider {
         LocalDateTime expirationTime = LocalDateTime.now().plusMinutes(15);
         return Jwts.builder()
                 .claim("name", auth.getPrincipal())
-                .claim("authorities", auth.getAuthorities())
+                .claim("roles", auth.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList())
                 .claim("details", auth.getDetails())
                 .signWith(secretKey)
                 .setExpiration(Date.from(expirationTime.atZone(ZoneId.systemDefault()).toInstant()))

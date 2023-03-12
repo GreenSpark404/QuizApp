@@ -12,6 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -33,14 +34,16 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                                     FilterChain filterChain) throws ServletException, IOException {
         Cookie[] cookies = Optional.ofNullable(request.getCookies()).orElse(new Cookie[]{});
         Cookie authCookie = Arrays.stream(cookies)
-                .filter(cookie -> StringUtils.equals(JwtConstants.JWT_AUTH_COOKIE.getValue(), cookie.getValue()))
+                .filter(cookie -> StringUtils.equals(JwtConstants.JWT_AUTH_COOKIE.getValue(), cookie.getName()))
                 .findFirst().orElse(null);
         if (authCookie != null) {
             try {
                 Claims claims = tokenProvider.readToken(authCookie.getValue()).getBody();
-                var authenticationToken = new UsernamePasswordAuthenticationToken(
-                        claims.get("name"), null, claims.get("authorities", Collection.class)
-                );
+                Collection<?> rolesRaw = claims.get("roles", Collection.class);
+                var authorities =
+                        rolesRaw.stream().map(String::valueOf).map(SimpleGrantedAuthority::new).toList();
+                var authenticationToken =
+                        new UsernamePasswordAuthenticationToken(claims.get("name"), null, authorities);
                 authenticationToken.setDetails(claims.get("details"));
                 SecurityContext securityContext = SecurityContextHolder.getContext();
                 securityContext.setAuthentication(authenticationToken);

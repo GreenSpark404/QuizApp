@@ -1,0 +1,13 @@
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: validate
+  datasource:
+    driver-class-name: org.hsqldb.jdbc.JDBCDriver
+    url: jdbc:hsqldb:mem:memdb;DB_CLOSE_DELAY=-1
+    username: sa
+    password:
+  sql:
+    init:
+      data-locations: classpath*:db/data.sql
+      schema-locations: classpath*:db/schema.sql
