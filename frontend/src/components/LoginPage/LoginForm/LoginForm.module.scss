@@ -1,8 +1,21 @@
 .component {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 30px;
-  justify-content: center;
-  align-items: center;
+  height: 100vh;
+
+  .title {
+    margin: 25px;
+  }
+
+  .content {
+    padding: 30px;
+    height: 50vh;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    justify-content: center;
+    align-items: center;
+
+    .loginButton {
+      align-self: flex-end;
+    }
+  }
 }

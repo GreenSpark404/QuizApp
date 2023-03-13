@@ -5,11 +5,14 @@ import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import { SwipeableDrawer } from '@material-ui/core';
 import MenuContent from './MenuContent';
+import { useNavigate } from 'react-router-dom';
 import classes from './Header.module.scss'
 
 const Header = ():JSX.Element => {
 
     const [state, setState] = React.useState({top: false});
+
+    const navigate = useNavigate();
 
     const toggleDrawer = (anchor: string, open: boolean) => (
         event: React.KeyboardEvent | React.MouseEvent,
@@ -32,9 +35,13 @@ const Header = ():JSX.Element => {
         <div className={classes.component}>
             <AppBar position="fixed">
                 <Toolbar className={classes.toolbar}>
-                    <Typography variant="h6">
-                        QuizApp
-                    </Typography>
+                    <div
+                        onClick={() => navigate('/')}
+                    >
+                        <Typography variant="h6">
+                            QuizApp
+                        </Typography>
+                    </div>
                         <Button>
                             <Button className={classes.menuButton} onClick={toggleDrawer("top", true)}>Menu</Button>
                             <SwipeableDrawer
