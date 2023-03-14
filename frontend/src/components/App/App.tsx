@@ -1,9 +1,10 @@
 import React, { useEffect } from 'react';
 import { observer } from 'mobx-react'
 import Header from '../common/Header';
-import classes from './App.module.scss'
-import authStore from '../../stores/authStore';
 import { useNavigate, useLocation } from 'react-router-dom';
+import userStore from '../../stores/userStore';
+import QuizControlPage from '../QuizControlPage';
+import classes from './App.module.scss'
 
 function App(): JSX.Element {
 
@@ -11,14 +12,14 @@ function App(): JSX.Element {
     const location = useLocation();
 
     useEffect(() => {
-        if (!authStore.isAuth) navigate('/login')
-    }, [authStore.isAuth, location.pathname])
+        if (!userStore.isAuth) navigate('/login')
+    }, [userStore.isAuth, location.pathname])
 
   return (
       <>
           <Header />
           <div className={classes.component}>
-              main page
+              <QuizControlPage />
           </div>
       </>
   );
