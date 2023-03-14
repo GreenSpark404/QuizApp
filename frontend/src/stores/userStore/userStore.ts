@@ -20,7 +20,8 @@ class UserStore {
             password: password,
         }
         try {
-            await service.loadUserContent(user);
+            const response = await service.loadUserContent(user);
+            console.log(response);
             runInAction(() => {
                 this.isAuth = true;
             });
