@@ -14,9 +14,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 @RestController
 @RequestMapping("/api/gm")
@@ -32,15 +34,21 @@ public class GameMasterController {
         return quizMapper.toDto(quizRepository.findAll());
     }
 
-    @PostMapping("start-session/{quizId}")
+    @PostMapping("{quizId}/start-session")
     public String startSession(@PathVariable String quizId) {
         Quiz quiz = quizRepository.findQuizById(quizId).orElseThrow(IllegalArgumentException::new);
         GameSession session = gameSessionStorage.startSession(UUID.randomUUID().toString());
-        session.setQuestions(new LinkedList<>(quiz.getQuestionList()));
+        session.setQuestions(new ArrayList<>(quiz.getQuestionList()));
         return session.getId();
     }
 
-    @PostMapping("close-session/{sessionId}")
+    @PostMapping("{sessionId}/next-question")
+    public void nextQuestion(@PathVariable String sessionId) {
+
+
+    }
+
+    @PostMapping("{sessionId}/close-session")
     public void closeSession(@PathVariable String sessionId) {
         gameSessionStorage.closeSession(sessionId);
     }

@@ -14,7 +14,8 @@ create table QUIZ_QUESTION_LIST
                     constraint QUIZ_ID_IDX
                     references QUIZ,
     ANSWERS       VARCHAR(255) ARRAY,
-    QUESTION_TEXT VARCHAR(2048)
+    QUESTION_TEXT VARCHAR(2048),
+    CORRECT_ANSWER INTEGER
 );
 
 create index QUIZ_ID_IDX
