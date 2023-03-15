@@ -73,6 +73,7 @@ public class AuthenticationController {
         authCookie.setPath("/");
         response.addCookie(authCookie);
         session.getPlayerMap().put(player.getId(), player);
+        session.getScoreboardMap().put(player, 0);
     }
 
 }

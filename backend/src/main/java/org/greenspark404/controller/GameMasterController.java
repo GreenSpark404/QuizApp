@@ -1,12 +1,15 @@
 package org.greenspark404.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.greenspark404.mapper.GameSessionMapper;
+import org.greenspark404.mapper.GameStateMapper;
 import org.greenspark404.mapper.QuizMapper;
-import org.greenspark404.model.GameSession;
+import org.greenspark404.model.dto.GameSessionDTO;
+import org.greenspark404.model.dto.GameStateDTO;
 import org.greenspark404.model.dto.QuizDTO;
 import org.greenspark404.model.entity.Quiz;
 import org.greenspark404.repository.QuizRepository;
-import org.greenspark404.service.GameSessionStorage;
+import org.greenspark404.service.GameSessionService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,11 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 @RestController
 @RequestMapping("/api/gm")
@@ -27,7 +26,9 @@ import java.util.concurrent.locks.ReentrantLock;
 public class GameMasterController {
     private final QuizRepository quizRepository;
     private final QuizMapper quizMapper;
-    private final GameSessionStorage gameSessionStorage;
+    private final GameSessionService gameSessionService;
+    private final GameSessionMapper gameSessionMapper;
+    private final GameStateMapper gameStateMapper;
 
     @GetMapping("quiz-list")
     public List<QuizDTO> getQuizList() {
@@ -37,19 +38,26 @@ public class GameMasterController {
     @PostMapping("{quizId}/start-session")
     public String startSession(@PathVariable String quizId) {
         Quiz quiz = quizRepository.findQuizById(quizId).orElseThrow(IllegalArgumentException::new);
-        GameSession session = gameSessionStorage.startSession(UUID.randomUUID().toString());
-        session.setQuestions(new ArrayList<>(quiz.getQuestionList()));
-        return session.getId();
+        return gameSessionService.startSession(quiz).getId();
     }
 
     @PostMapping("{sessionId}/next-question")
     public void nextQuestion(@PathVariable String sessionId) {
+        gameSessionService.nextQuestion(sessionId);
+    }
 
+    @PostMapping("{sessionId}/end-question")
+    public GameStateDTO endQuestion(@PathVariable String sessionId) {
+        return gameStateMapper.toDto(gameSessionService.endQuestion(sessionId));
+    }
 
+    @GetMapping("{sessionId}/session")
+    public GameSessionDTO getSessionInfo(@PathVariable String sessionId) {
+        return gameSessionMapper.toDto(gameSessionService.getSession(sessionId));
     }
 
     @PostMapping("{sessionId}/close-session")
     public void closeSession(@PathVariable String sessionId) {
-        gameSessionStorage.closeSession(sessionId);
+        gameSessionService.closeSession(sessionId);
     }
 }

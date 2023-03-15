@@ -1,28 +1,105 @@
 package org.greenspark404.service;
 
+import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.greenspark404.model.GameSession;
+import org.greenspark404.model.GameState;
+import org.greenspark404.model.Player;
 import org.greenspark404.model.entity.Question;
+import org.greenspark404.model.entity.Quiz;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.util.concurrent.locks.Lock;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantLock;
 
 @Service
+@RequiredArgsConstructor
 public class GameSessionService {
-    private final Lock lock = new ReentrantLock();
+    private final GameSessionStorage gameSessionStorage;
+    private final ReentrantLock lock = new ReentrantLock();
 
-    public Question getCurrentQuestion(GameSession session) {
-        return session.getQuestions().get(session.getCurrentQuestionIndex());
+    public GameSession startSession(Quiz quiz) {
+        GameSession session = gameSessionStorage.startSession(UUID.randomUUID().toString());
+        session.setQuizId(quiz.getId());
+        session.setQuestionQueue(new LinkedList<>(quiz.getQuestionList()));
+        return session;
     }
 
-    public void nextQuestion(GameSession session) {
+    public GameSession getSession(String sessionId) {
+        return gameSessionStorage.getSession(sessionId);
+    }
+
+    public Question getCurrentQuestion(String sessionId) {
+        GameSession session = gameSessionStorage.getSession(sessionId);
+        return Optional.ofNullable(session.getState()).map(GameState::getQuestion).orElse(null);
+    }
+
+    public void registerAnswer(String sessionId, Integer answerNumber) {
+        GameSession session = gameSessionStorage.getSession(sessionId);
+        Player player = Objects.requireNonNull(session.getPlayerMap().get(ejectPlayerId()));
+        GameState state = session.getState();
+        if (state != null && lock.getHoldCount() == 0) {
+            state.getPlayersAnswerMap().put(player, answerNumber);
+            boolean isCorrect = Objects.equals(state.getQuestion().getCorrectAnswer(), answerNumber);
+            if (isCorrect) {
+                int pos = state.getCorrectAnswersCount().getAndIncrement();
+                int points = 5 + Math.max((5 - pos), 0);
+                session.getScoreboardMap().computeIfPresent(player, (k, v) -> v + points);
+            }
+        }
+    }
+
+    public void nextQuestion(String sessionId) {
+        doWithLock(() -> {
+            GameSession session = gameSessionStorage.getSession(sessionId);
+            GameState state = new GameState(session.getQuestionQueue().poll(), new ConcurrentHashMap<>());
+            session.setState(state);
+            return null;
+            // TODO websocket
+        });
+    }
+
+    public GameState endQuestion(String sessionId) {
+        return doWithLock(() -> {
+            GameSession session = gameSessionStorage.getSession(sessionId);
+            GameState state = session.getState();
+            session.setState(null);
+            session.getPlayersAnswersHistory().add(Collections.unmodifiableMap(state.getPlayersAnswerMap()));
+            return state;
+            // TODO websocket
+        });
+    }
+
+    public void closeSession(String sessionId) {
+        gameSessionStorage.closeSession(sessionId);
+    }
+
+    @SuppressWarnings("unchecked")
+    private String ejectPlayerId() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Map<String, String> details = (Map<String, String>) authentication.getDetails();
+        return details.get("playerId");
+    }
+
+    @SneakyThrows
+    private <T> T doWithLock(Callable<T> action) {
         if (lock.tryLock()) {
             try {
-
-
+                return action.call();
             } finally {
                 lock.unlock();
             }
+        } else {
+            throw new IllegalStateException("Method was invoked at illegal moment");
         }
     }
 
