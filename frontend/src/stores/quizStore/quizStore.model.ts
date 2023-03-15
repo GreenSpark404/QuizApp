@@ -1,3 +1,5 @@
-export type Quiz = {
-
+export type QuizItem = {
+    id: string,
+    name: string,
+    description: string,
 };

@@ -12,7 +12,7 @@ function App(): JSX.Element {
     const location = useLocation();
 
     useEffect(() => {
-        if (!userStore.isAuth) navigate('/login')
+        if (!userStore.isAuth && !document.cookie.includes('JWT_AUTH_TOKEN')) navigate('/login')
     }, [userStore.isAuth, location.pathname])
 
   return (

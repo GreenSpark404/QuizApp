@@ -42,18 +42,16 @@ const Header = ():JSX.Element => {
                             QuizApp
                         </Typography>
                     </div>
-                        <Button>
-                            <Button className={classes.menuButton} onClick={toggleDrawer("top", true)}>Menu</Button>
-                            <SwipeableDrawer
-                                anchor="top"
-                                open={state['top']}
-                                onClose={toggleDrawer("top", false)}
-                                onOpen={toggleDrawer("top", true)}
-                                disableBackdropTransition={!iOS} disableDiscovery={iOS}
-                            >
-                                <MenuContent />
-                            </SwipeableDrawer>
-                        </Button>
+                        <Button className={classes.menuButton} onClick={toggleDrawer("top", true)}>Menu</Button>
+                        <SwipeableDrawer
+                            anchor="top"
+                            open={state['top']}
+                            onClose={toggleDrawer("top", false)}
+                            onOpen={toggleDrawer("top", true)}
+                            disableBackdropTransition={!iOS} disableDiscovery={iOS}
+                        >
+                            <MenuContent />
+                        </SwipeableDrawer>
                 </Toolbar>
             </AppBar>
         </div>

@@ -21,7 +21,6 @@ class UserStore {
         }
         try {
             const response = await service.loadUserContent(user);
-            console.log(response);
             runInAction(() => {
                 this.isAuth = true;
             });
