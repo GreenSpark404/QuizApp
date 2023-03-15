@@ -8,13 +8,6 @@ import classes from './App.module.scss'
 
 function App(): JSX.Element {
 
-    const navigate = useNavigate();
-    const location = useLocation();
-
-    useEffect(() => {
-        if (!userStore.isAuth && !document.cookie.includes('JWT_AUTH_TOKEN')) navigate('/login')
-    }, [userStore.isAuth, location.pathname])
-
   return (
       <>
           <Header />

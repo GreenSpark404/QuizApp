@@ -7,14 +7,23 @@ import { observer } from 'mobx-react';
 import { Accordion, AccordionDetails, AccordionSummary, TextField } from '@material-ui/core';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
+import userStore from '../../stores/userStore/userStore';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 type QuizControlPageProps = {};
 
 const QuizControlPage: React.FC<QuizControlPageProps> = ({}) => {
 
+    const navigate = useNavigate();
+    const location = useLocation();
+
     useEffect(() => {
-        quizStore.getQuizList();
-    }, [])
+        if (!userStore.isAuth && !document.cookie.includes('JWT_AUTH_TOKEN')) {
+            navigate('/login')
+        } else {
+            quizStore.getQuizList();
+        }
+    }, [userStore.isAuth, location.pathname])
 
     const createSessionHandler = (quizId: string): void => {
         quizStore.startSession(quizId);
