@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.CredentialsContainer;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -44,6 +45,7 @@ public class AuthenticationController {
             UsernamePasswordAuthenticationToken authenticationToken =
                     new UsernamePasswordAuthenticationToken(credential.getUsername(), credential.getPassword());
             Authentication authentication = authenticationProvider.authenticate(authenticationToken);
+            ((CredentialsContainer) authentication.getPrincipal()).eraseCredentials();
             Cookie authCookie = new Cookie(JwtConstants.JWT_AUTH_COOKIE.getValue(), tokenProvider.createToken(authentication));
             authCookie.setPath("/");
             response.addCookie(authCookie);

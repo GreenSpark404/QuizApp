@@ -22,7 +22,7 @@ public class JwtTokenProvider {
     public String createToken(Authentication auth) {
         LocalDateTime expirationTime = LocalDateTime.now().plusMinutes(15);
         return Jwts.builder()
-                .claim("name", auth.getPrincipal())
+                .claim("principal", auth.getPrincipal())
                 .claim("roles", auth.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList())
                 .claim("details", auth.getDetails())
                 .signWith(secretKey)

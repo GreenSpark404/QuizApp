@@ -43,11 +43,12 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 var authorities =
                         rolesRaw.stream().map(String::valueOf).map(SimpleGrantedAuthority::new).toList();
                 var authenticationToken =
-                        new UsernamePasswordAuthenticationToken(claims.get("name"), null, authorities);
+                        new UsernamePasswordAuthenticationToken(claims.get("principal"), null, authorities);
                 authenticationToken.setDetails(claims.get("details"));
                 SecurityContext securityContext = SecurityContextHolder.getContext();
                 securityContext.setAuthentication(authenticationToken);
                 authCookie.setValue(tokenProvider.createToken(authenticationToken));
+                authCookie.setPath("/");
                 response.addCookie(authCookie);
             } catch (Exception e) {
                 log.error(ExceptionUtils.getRootCauseMessage(e));
