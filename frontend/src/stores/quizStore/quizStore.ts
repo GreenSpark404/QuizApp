@@ -6,11 +6,14 @@ class QuizStore {
 
     quizList: Array<QuizItem> = [];
 
+    idSession: string = '';
+
     isLoading: boolean = false;
 
     constructor() {
         makeObservable(this, {
             quizList: observable,
+            idSession: observable,
             getQuizList: action.bound,
             startSession: action.bound,
         });
@@ -30,9 +33,23 @@ class QuizStore {
     async startSession(quizId: string): Promise<void> {
         try {
             const idSession = await service.startSession(quizId);
-            console.log(idSession);
+            runInAction(() => {
+                this.idSession = idSession;
+            });
+        } catch (e) {
+            console.log(e)
+        }
+    }
+
+    async regPlayer(sessionId: string, name: string): Promise<void> {
+        const player = {
+            name: name
+        }
+        try {
+            const data = await service.regPlayer(sessionId, player);
+            console.log(data);
             // runInAction(() => {
-            //     this.quizList = quizList;
+            //     this.idSession = idSession;
             // });
         } catch (e) {
             console.log(e)

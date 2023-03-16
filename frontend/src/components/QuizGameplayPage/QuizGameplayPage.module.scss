@@ -1,0 +1,20 @@
+.component {
+  padding: 70px 15px 15px 15px;
+  height: 100vh;
+  background-color: #edeef0;
+  flex-direction: column;
+
+  .regPlayerForm {
+    padding: 30px;
+    height: 50vh;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    justify-content: center;
+    align-items: center;
+
+    .playerLoginButton {
+      align-self: flex-end;
+    }
+  }
+}

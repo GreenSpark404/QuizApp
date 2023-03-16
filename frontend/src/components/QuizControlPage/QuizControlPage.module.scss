@@ -8,6 +8,14 @@
       display: flex;
       flex-direction: column;
       gap: 15px;
+
+      .textFieldWrapper {
+        display: flex;
+        flex-direction: row;
+        gap: 25px;
+        justify-content: start;
+        align-items: center;
+      }
     }
   }
 }

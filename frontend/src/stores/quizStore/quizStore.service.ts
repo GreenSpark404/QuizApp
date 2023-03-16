@@ -9,9 +9,14 @@ const service = {
     },
 
     startSession(quizId: string) {
-        return axios.post(`http://localhost:8080/api/gm/${quizId}/start-session`, {
+        return axios.post(`http://localhost:8080/api/gm/${quizId}/start-session`, null, {
             withCredentials: true
         })
+            .then((response) => response.data);
+    },
+
+    regPlayer(sessionId: string, player: object) {
+        return axios.post(`http://localhost:8080/api/auth/${sessionId}/register`, player)
             .then((response) => response.data);
     }
 }
