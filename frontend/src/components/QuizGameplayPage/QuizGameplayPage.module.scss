@@ -4,6 +4,12 @@
   background-color: #edeef0;
   flex-direction: column;
 
+  .title {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+  }
+
   .regPlayerForm {
     padding: 30px;
     height: 50vh;

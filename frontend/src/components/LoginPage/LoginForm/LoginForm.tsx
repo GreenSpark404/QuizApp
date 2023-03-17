@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
 import { FormControl, IconButton, InputAdornment, InputLabel, OutlinedInput, TextField } from '@material-ui/core';
 import Typography from '@material-ui/core/Typography';
@@ -6,7 +6,6 @@ import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import Button from '@material-ui/core/Button';
 import userStore from '../../../stores/userStore';
-import { useNavigate } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import classes from './LoginForm.module.scss';
 
@@ -18,15 +17,14 @@ const LoginForm: React.FC<LoginFormProps> = ({}) => {
     const [password, setPassword] = useState<string>("");
     const [showPassword, setShowPassword] = useState<boolean>(false);
 
-    const navigate = useNavigate();
-
-    const shouldRedirect = (): void => {
-        if (userStore.isAuth) navigate('/')
-    }
-
     const loginHandler = async (): Promise<void> => {
-        await userStore.getAdminContent(login, password);
-        shouldRedirect();
+        userStore.getAdminContent(login, password);
+    };
+
+    const enterClickHandler = (e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
+        if (e.code === "Enter") {
+            loginHandler();
+        }
     };
 
   return (
@@ -36,7 +34,7 @@ const LoginForm: React.FC<LoginFormProps> = ({}) => {
             variant="h4"
             color="primary"
         >
-            Привет!
+            Войти как гейм мастер
         </Typography>
         <div className={classes.content}>
             <TextField
@@ -53,6 +51,7 @@ const LoginForm: React.FC<LoginFormProps> = ({}) => {
                     type={showPassword ? 'text' : 'password'}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
+                    onKeyDown={(e )=> enterClickHandler(e)}
                     endAdornment={
                         <InputAdornment position="end">
                             <IconButton

@@ -3,3 +3,8 @@ export type QuizItem = {
     name: string,
     description: string,
 };
+
+export type StartedSession = {
+    quizName: string,
+    sessionId: string,
+}

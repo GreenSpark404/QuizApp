@@ -1,3 +1,8 @@
 .component {
   height: 40vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-end;
+  padding: 15px;
 }

@@ -1,0 +1,43 @@
+.component {
+  padding: 70px 15px 15px 15px;
+
+  .sessionsList {
+    padding: 25px;
+
+    .sessionCard {
+      margin-top: 5px;
+      border-radius: 8px;
+      background-color: #edeef0;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+
+      &:last-child {
+        align-items: flex-end;
+      }
+    }
+  }
+
+  .quizListTitle {
+    margin: 15px 0 15px 10px;
+  }
+
+  .accordion {
+
+    .accordionDetails {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+
+      .textFieldWrapper {
+        display: flex;
+        justify-content: start;
+        align-items: center;
+
+        .copyButton {
+          margin-left: 10px;
+        }
+      }
+    }
+  }
+}

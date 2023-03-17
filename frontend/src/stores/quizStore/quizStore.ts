@@ -1,6 +1,6 @@
 import { action, makeObservable, observable, runInAction } from 'mobx';
 import service from './quizStore.service';
-import { QuizItem } from './quizStore.model';
+import { QuizItem, StartedSession } from './quizStore.model';
 
 class QuizStore {
 
@@ -8,12 +8,15 @@ class QuizStore {
 
     idSession: string = '';
 
+    startedSessions: Array<StartedSession> = [];
+
     isLoading: boolean = false;
 
     constructor() {
         makeObservable(this, {
             quizList: observable,
             idSession: observable,
+            startedSessions: observable,
             getQuizList: action.bound,
             startSession: action.bound,
         });
@@ -30,12 +33,15 @@ class QuizStore {
         }
     }
 
-    async startSession(quizId: string): Promise<void> {
+    async startSession(quiz: QuizItem): Promise<void> {
         try {
-            const idSession = await service.startSession(quizId);
-            runInAction(() => {
-                this.idSession = idSession;
-            });
+            const idSession = await service.startSession(quiz.id);
+            if (!!idSession) {
+                runInAction(() => {
+                    this.idSession = idSession;
+                    this.startedSessions.push({ quizName: quiz.name, sessionId: idSession})
+                });
+            }
         } catch (e) {
             console.log(e)
         }

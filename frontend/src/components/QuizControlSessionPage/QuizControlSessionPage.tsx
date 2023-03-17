@@ -1,50 +1,68 @@
 import React, { useEffect, useState } from 'react';
 
-import classes from './QuizControlPage.module.scss';
-import quizStore from '../../stores/quizStore';
+import classes from './QuizControlSessionPage.module.scss';
+import quizStore, { QuizItem } from '../../stores/quizStore';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { observer } from 'mobx-react';
-import { Accordion, AccordionDetails, AccordionSummary, IconButton, TextField } from '@material-ui/core';
+import { Accordion, AccordionDetails, AccordionSummary, IconButton, Paper, TextField } from '@material-ui/core';
 import FileCopyIcon from '@material-ui/icons/FileCopy';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import userStore from '../../stores/userStore/userStore';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 type QuizControlPageProps = {};
 
-const QuizControlPage: React.FC<QuizControlPageProps> = ({}) => {
+const QuizControlSessionPage: React.FC<QuizControlPageProps> = ({}) => {
 
-    const { getQuizList, startSession, quizList, idSession } = quizStore;
+    const { getQuizList, startSession, quizList, idSession, startedSessions } = quizStore;
 
     const [sessionLink, setSessionLink] = useState<string>("");
 
     const navigate = useNavigate();
-    const location = useLocation();
 
     useEffect(() => {
         if (!userStore.isAuth && !document.cookie.includes('JWT_AUTH_TOKEN')) {
-            navigate('/login')
+            navigate('/login');
         } else {
             getQuizList();
         }
-    }, [userStore.isAuth, location.pathname])
+    }, [userStore.isAuth])
 
     useEffect(() => {
         if (idSession) setSessionLink(`http://localhost:3000/quizSession/${idSession}`)
     }, [idSession])
 
-    const createSessionHandler = (quizId: string): void => {
-        startSession(quizId);
+    const createSessionHandler = (quiz: QuizItem ): void => {
+        startSession(quiz);
     };
 
     const copySessionLinkHandler = (): void => {
         navigator.clipboard.writeText(sessionLink);
     };
 
+    const navigateToControlGameplayPage = (sessionId: string): void => {
+        navigate(`/quizControlSession/${sessionId}`);
+    }
+
   return (
     <div className={classes.component}>
-        {quizList ? quizList.map(item =>
+
+        <Paper
+            elevation={3}
+            className={classes.sessionsList}
+        >
+            <Typography variant="h6">Список созданных сессий:</Typography>
+            {startedSessions.length && startedSessions.map((item) =>
+                <div className={classes.sessionCard}>
+                    <Typography>{`${item.quizName} ${item.sessionId}`}</Typography>
+                    <Button onClick={() => navigateToControlGameplayPage(item.sessionId)}>Управлять</Button>
+                </div>
+
+            )}
+        </Paper>
+        <Typography variant="h6" className={classes.quizListTitle}>Список квизов:</Typography>
+        {quizList.length ? quizList.map(item =>
             <Accordion key={item.id} className={classes.accordion}>
                 <AccordionSummary
                     expandIcon={<ExpandMoreIcon />}
@@ -55,7 +73,7 @@ const QuizControlPage: React.FC<QuizControlPageProps> = ({}) => {
                     <Typography>
                         {item.description}
                     </Typography>
-                    <Button variant='contained' onClick={() => createSessionHandler(item.id)}>
+                    <Button variant='contained' onClick={() => createSessionHandler(item)}>
                         Создать сессию
                     </Button>
                     <div className={classes.textFieldWrapper}>
@@ -63,8 +81,9 @@ const QuizControlPage: React.FC<QuizControlPageProps> = ({}) => {
                             variant="outlined"
                             placeholder="Ссылка на сессию"
                             value={sessionLink}
+                            fullWidth
                         />
-                        <IconButton color="primary" aria-label="upload picture" component="span">
+                        <IconButton color="primary">
                             <FileCopyIcon
                                 color="action"
                                 onClick={copySessionLinkHandler}
@@ -81,4 +100,4 @@ const QuizControlPage: React.FC<QuizControlPageProps> = ({}) => {
   );
 };
 
-export default observer(QuizControlPage);
+export default observer(QuizControlSessionPage);

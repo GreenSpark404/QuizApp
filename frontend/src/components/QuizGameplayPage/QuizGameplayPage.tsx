@@ -33,6 +33,12 @@ const QuizGameplayPage: React.FC<QuizGameplayPageProps> = ({}) => {
             <Typography color="textPrimary" variant="h6">
                 {`id сессии ${sessionId}`}
             </Typography>
+            <Typography
+                variant="h4"
+                color="primary"
+            >
+                Привет!
+            </Typography>
         </div>
         <div className={classes.regPlayerForm}>
             <TextField

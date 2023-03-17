@@ -1,3 +1,3 @@
 export { default } from './quizStore'
 
-export type { QuizItem } from './quizStore.model'
+export type { QuizItem, StartedSession } from './quizStore.model'

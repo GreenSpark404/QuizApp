@@ -2,17 +2,14 @@ import React from 'react';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
-import { SwipeableDrawer } from '@material-ui/core';
+import { IconButton, SwipeableDrawer } from '@material-ui/core';
 import MenuContent from './MenuContent';
-import { useNavigate } from 'react-router-dom';
 import classes from './Header.module.scss'
+import MenuIcon from '@material-ui/icons/Menu';
 
 const Header = ():JSX.Element => {
 
     const [state, setState] = React.useState({top: false});
-
-    const navigate = useNavigate();
 
     const toggleDrawer = (anchor: string, open: boolean) => (
         event: React.KeyboardEvent | React.MouseEvent,
@@ -31,27 +28,35 @@ const Header = ():JSX.Element => {
 
     const iOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
 
+    const isVisibleMenu = document.cookie.includes('JWT_AUTH_TOKEN');
+
     return (
         <div className={classes.component}>
             <AppBar position="fixed">
                 <Toolbar className={classes.toolbar}>
-                    <div
-                        onClick={() => navigate('/')}
-                    >
-                        <Typography variant="h6">
-                            QuizApp
-                        </Typography>
-                    </div>
-                        <Button className={classes.menuButton} onClick={toggleDrawer("top", true)}>Menu</Button>
-                        <SwipeableDrawer
-                            anchor="top"
-                            open={state['top']}
-                            onClose={toggleDrawer("top", false)}
-                            onOpen={toggleDrawer("top", true)}
-                            disableBackdropTransition={!iOS} disableDiscovery={iOS}
-                        >
-                            <MenuContent />
-                        </SwipeableDrawer>
+                    <Typography variant="h6">
+                        QuizApp
+                    </Typography>
+                    {isVisibleMenu &&
+                        <>
+                            <IconButton color="primary">
+                                <MenuIcon
+                                    color="primary"
+                                    onClick={toggleDrawer("top", true)}
+                                    className={classes.menuButton}
+                                />
+                            </IconButton>
+                            <SwipeableDrawer
+                                anchor="top"
+                                open={state['top']}
+                                onClose={toggleDrawer("top", false)}
+                                onOpen={toggleDrawer("top", true)}
+                                disableBackdropTransition={!iOS} disableDiscovery={iOS}
+                            >
+                                <MenuContent />
+                            </SwipeableDrawer>
+                        </>
+                    }
                 </Toolbar>
             </AppBar>
         </div>

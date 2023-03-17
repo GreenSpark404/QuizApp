@@ -5,6 +5,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import App from './components/App';
 import LoginPage from './components/LoginPage';
 import QuizGameplayPage from './components/QuizGameplayPage';
+import QuizControlGameplayPage from './components/QuizControlGameplayPage';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -22,6 +23,10 @@ const router = createBrowserRouter([
     {
         path: "/quizSession/*",
         element: <QuizGameplayPage />,
+    },
+    {
+        path: "/quizControlSession/*",
+        element: <QuizControlGameplayPage />,
     },
 ]);
 
