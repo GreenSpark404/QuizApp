@@ -1,26 +1,23 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import classes from './QuizControlGameplayPage.module.scss';
 import Header from '../common/Header';
 import { observer } from 'mobx-react';
-import useWebSocket, { ReadyState } from 'react-use-websocket';
+import { useSubscription } from "react-stomp-hooks";
 
 type QuizControlGameplayPageProps = {};
 
 const QuizControlGameplayPage: React.FC<QuizControlGameplayPageProps> = ({}) => {
 
-    const { sendMessage, lastMessage, readyState } = useWebSocket('wss://demo.piesocket.com/v3/channel_123?api_key=VCXCEuvhGcBDP7XhiJJUDvR1e1D3eiVjgZ9VRiaV&notify_self');
+    const [lastMessage, setLastMessage] = useState<string>("");
 
-    useEffect(() => {
-        console.log(readyState);
-        console.log(lastMessage);
-    }, [lastMessage])
+    useSubscription("/", (message) => setLastMessage(message.body));
 
   return (
     <div className={classes.component}>
         <Header />
         <div className={classes.content}></div>
-      QuizControlGameplayPage
+        {lastMessage}
     </div>
   );
 };

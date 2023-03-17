@@ -6,6 +6,7 @@ import App from './components/App';
 import LoginPage from './components/LoginPage';
 import QuizGameplayPage from './components/QuizGameplayPage';
 import QuizControlGameplayPage from './components/QuizControlGameplayPage';
+import { StompSessionProvider } from "react-stomp-hooks";
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -26,7 +27,11 @@ const router = createBrowserRouter([
     },
     {
         path: "/quizControlSession/*",
-        element: <QuizControlGameplayPage />,
+        element: (
+            <StompSessionProvider url="ws://127.0.0.1:8080/ws">
+                <QuizControlGameplayPage />
+            </StompSessionProvider>
+        ),
     },
 ]);
 
