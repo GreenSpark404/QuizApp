@@ -11,7 +11,7 @@ import org.greenspark404.model.Player;
 import org.greenspark404.model.Roles;
 import org.greenspark404.model.dto.AuthDTO;
 import org.greenspark404.model.dto.PlayerDTO;
-import org.greenspark404.service.GameSessionStorage;
+import org.greenspark404.component.GameSessionStorage;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

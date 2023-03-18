@@ -8,8 +8,8 @@ import org.greenspark404.model.dto.GameSessionDTO;
 import org.greenspark404.model.dto.GameStateDTO;
 import org.greenspark404.model.dto.QuizDTO;
 import org.greenspark404.model.entity.Quiz;
-import org.greenspark404.repository.QuizRepository;
 import org.greenspark404.service.GameSessionService;
+import org.greenspark404.service.QuizService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,7 +26,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @PreAuthorize("hasRole('GAME_MASTER')")
 public class GameMasterController {
-    private final QuizRepository quizRepository;
+    private final QuizService quizService;
     private final QuizMapper quizMapper;
     private final GameSessionService gameSessionService;
     private final GameSessionMapper gameSessionMapper;
@@ -34,7 +34,7 @@ public class GameMasterController {
 
     @GetMapping("quiz-list")
     public List<QuizDTO> getQuizList() {
-        return quizMapper.toDto(quizRepository.findAll());
+        return quizMapper.toDto(quizService.getQuizList());
     }
 
     @GetMapping("session-list")
@@ -44,12 +44,12 @@ public class GameMasterController {
 
     @PutMapping("add-quiz")
     public void addQuiz(@RequestBody QuizDTO quiz) {
-        quizRepository.save(quizMapper.toEntity(quiz));
+        quizService.save(quizMapper.toEntity(quiz));
     }
 
     @PostMapping("{quizId}/start-session")
     public String startSession(@PathVariable String quizId) {
-        Quiz quiz = quizRepository.findQuizById(quizId).orElseThrow(IllegalArgumentException::new);
+        Quiz quiz = quizService.getById(quizId);
         return gameSessionService.startSession(quiz).getId();
     }
 

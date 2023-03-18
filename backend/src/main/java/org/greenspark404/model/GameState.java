@@ -1,15 +1,15 @@
 package org.greenspark404.model;
 
-import lombok.Data;
+import lombok.Value;
 import org.greenspark404.model.entity.Question;
 
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-@Data
+@Value
 public class GameState {
-    private final Question question;
-    private final Integer questionNumber;
-    private final Map<Player, String> playersAnswerMap;
-    private final AtomicInteger correctAnswersCount = new AtomicInteger();
+    Question question;
+    Integer questionNumber;
+    Map<Player, String> playersAnswerMap;
+    AtomicInteger correctAnswersCount = new AtomicInteger();
 }

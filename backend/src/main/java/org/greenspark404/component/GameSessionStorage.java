@@ -1,4 +1,4 @@
-package org.greenspark404.service;
+package org.greenspark404.component;
 
 import lombok.RequiredArgsConstructor;
 import org.greenspark404.model.GameSession;
@@ -8,6 +8,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.caffeine.CaffeineCache;
 import org.springframework.stereotype.Component;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
@@ -33,7 +34,8 @@ public class GameSessionStorage {
     public List<GameSession> getSessionList() {
         CaffeineCache cache = (CaffeineCache) cacheManager.getCache("gameSession");
         return Objects.requireNonNull(cache).getNativeCache().asMap()
-                .values().stream().map(GameSession.class::cast).toList();
+                .values().stream().map(GameSession.class::cast)
+                .sorted(Comparator.comparing(GameSession::getStartTimestamp)).toList();
     }
 
 }
