@@ -9,6 +9,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Data
 public class GameState {
     private final Question question;
-    private final Map<Player, Integer> playersAnswerMap;
+    private final Integer questionNumber;
+    private final Map<Player, String> playersAnswerMap;
     private final AtomicInteger correctAnswersCount = new AtomicInteger();
 }

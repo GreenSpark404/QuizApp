@@ -10,14 +10,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Profile("dev")
 @RestController
-@RequestMapping("/api/util")
+@RequestMapping("/api/dev")
 @RequiredArgsConstructor
-public class WebSocketController {
+public class DevController {
     private final SimpMessagingTemplate webSocket;
 
-    @PostMapping("/echo")
-    public String echo(@RequestBody String message) {
-        webSocket.convertAndSend("/echo", message);
+    @PostMapping("/send-ws-message")
+    public String sendWebsocketMessage(@RequestBody String message) {
+        webSocket.convertAndSend("/dev", message);
         return message;
     }
 }

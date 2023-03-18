@@ -22,11 +22,11 @@ public class GameController {
 
     @GetMapping("currentQuestion")
     public QuestionDTO getCurrentQuestion(@PathVariable String sessionId) {
-        return questionMapper.toDto(gameSessionService.getCurrentQuestion(sessionId));
+        return questionMapper.toPlayerDto(gameSessionService.getCurrentQuestion(sessionId));
     }
 
     @PostMapping("answer")
-    public void registerPlayerAnswer(@PathVariable String sessionId, @RequestParam Integer id) {
-        gameSessionService.registerAnswer(sessionId, id);
+    public void registerPlayerAnswer(@PathVariable String sessionId, @RequestParam String answer) {
+        gameSessionService.registerAnswer(sessionId, answer);
     }
 }

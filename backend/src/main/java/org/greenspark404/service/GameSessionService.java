@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -30,6 +31,8 @@ public class GameSessionService {
     public GameSession startSession(Quiz quiz) {
         GameSession session = gameSessionStorage.startSession(UUID.randomUUID().toString());
         session.setQuizId(quiz.getId());
+        session.setQuizName(quiz.getName());
+        session.setQuestionsCount(quiz.getQuestionList().size());
         session.setQuestionQueue(new LinkedList<>(quiz.getQuestionList()));
         return session;
     }
@@ -38,18 +41,22 @@ public class GameSessionService {
         return gameSessionStorage.getSession(sessionId);
     }
 
+    public List<GameSession> getSessionList() {
+        return gameSessionStorage.getSessionList();
+    }
+
     public Question getCurrentQuestion(String sessionId) {
         GameSession session = gameSessionStorage.getSession(sessionId);
         return Optional.ofNullable(session.getState()).map(GameState::getQuestion).orElse(null);
     }
 
-    public void registerAnswer(String sessionId, Integer answerNumber) {
+    public void registerAnswer(String sessionId, String answer) {
         GameSession session = gameSessionStorage.getSession(sessionId);
         Player player = Objects.requireNonNull(session.getPlayerMap().get(ejectPlayerId()));
         GameState state = session.getState();
         if (state != null && lock.getHoldCount() == 0) {
-            state.getPlayersAnswerMap().put(player, answerNumber);
-            boolean isCorrect = Objects.equals(state.getQuestion().getCorrectAnswer(), answerNumber);
+            state.getPlayersAnswerMap().put(player, answer);
+            boolean isCorrect = Objects.equals(state.getQuestion().getCorrectAnswer(), answer);
             if (isCorrect) {
                 int pos = state.getCorrectAnswersCount().getAndIncrement();
                 int points = 5 + Math.max((5 - pos), 0);
@@ -61,7 +68,9 @@ public class GameSessionService {
     public void nextQuestion(String sessionId) {
         doWithLock(() -> {
             GameSession session = gameSessionStorage.getSession(sessionId);
-            GameState state = new GameState(session.getQuestionQueue().poll(), new ConcurrentHashMap<>());
+            Question question = session.getQuestionQueue().poll();
+            Integer questionNumber = session.getQuestionsCount() - session.getQuestionQueue().size();
+            GameState state = new GameState(question, questionNumber, new ConcurrentHashMap<>());
             session.setState(state);
             return null;
             // TODO websocket

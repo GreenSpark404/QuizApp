@@ -14,6 +14,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -33,6 +35,16 @@ public class GameMasterController {
     @GetMapping("quiz-list")
     public List<QuizDTO> getQuizList() {
         return quizMapper.toDto(quizRepository.findAll());
+    }
+
+    @GetMapping("session-list")
+    public List<GameSessionDTO> getSessionList() {
+        return gameSessionService.getSessionList().stream().map(gameSessionMapper::toIdQuizNameDto).toList();
+    }
+
+    @PutMapping("add-quiz")
+    public void addQuiz(@RequestBody QuizDTO quiz) {
+        quizRepository.save(quizMapper.toEntity(quiz));
     }
 
     @PostMapping("{quizId}/start-session")

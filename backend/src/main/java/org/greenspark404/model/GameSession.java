@@ -13,10 +13,12 @@ import java.util.concurrent.ConcurrentHashMap;
 public class GameSession {
     private final String id;
     private String quizId;
+    private String quizName;
+    private Integer questionsCount;
     private Queue<Question> questionQueue;
     private GameState state;
 
     private final Map<String, Player> playerMap = new ConcurrentHashMap<>();
     private final Map<Player, Integer> scoreboardMap = new ConcurrentHashMap<>();
-    private final List<Map<Player, Integer>> playersAnswersHistory = new ArrayList<>();
+    private final List<Map<Player, String>> playersAnswersHistory = new ArrayList<>();
 }
