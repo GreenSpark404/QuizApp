@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 
-import { FormControl, IconButton, InputAdornment, InputLabel, OutlinedInput, TextField } from '@material-ui/core';
+import {FormControl, IconButton, InputAdornment, InputLabel, OutlinedInput, TextField} from '@material-ui/core';
 import Typography from '@material-ui/core/Typography';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import Button from '@material-ui/core/Button';
-import userStore from '../../../stores/userStore';
-import { observer } from 'mobx-react';
+import {observer} from 'mobx-react';
 import classes from './LoginForm.module.scss';
+import authStore from "../../../stores/authStore";
 
 type LoginFormProps = {};
 
@@ -18,7 +18,7 @@ const LoginForm: React.FC<LoginFormProps> = ({}) => {
     const [showPassword, setShowPassword] = useState<boolean>(false);
 
     const loginHandler = async (): Promise<void> => {
-        userStore.getAdminContent(login, password);
+        authStore.login(login, password);
     };
 
     const enterClickHandler = (e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>): void => {

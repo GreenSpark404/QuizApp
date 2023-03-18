@@ -8,6 +8,13 @@ const service = {
             .then((response) => response.data);
     },
 
+    loadSessionList() {
+        return axios.get(`http://localhost:8080/api/gm/session-list`, {
+            withCredentials: true
+        })
+            .then((response) => response.data);
+    },
+
     startSession(quizId: string) {
         return axios.post(`http://localhost:8080/api/gm/${quizId}/start-session`, null, {
             withCredentials: true

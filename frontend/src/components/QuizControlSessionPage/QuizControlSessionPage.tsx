@@ -1,37 +1,33 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 
 import classes from './QuizControlSessionPage.module.scss';
-import quizStore, { QuizItem } from '../../stores/quizStore';
+import quizStore, {QuizItem} from '../../stores/quizStore';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import { observer } from 'mobx-react';
-import { Accordion, AccordionDetails, AccordionSummary, IconButton, Paper, TextField } from '@material-ui/core';
+import {observer} from 'mobx-react';
+import {Accordion, AccordionDetails, AccordionSummary, IconButton, Paper, TextField} from '@material-ui/core';
 import FileCopyIcon from '@material-ui/icons/FileCopy';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
-import userStore from '../../stores/userStore/userStore';
-import { useNavigate } from 'react-router-dom';
+import {useNavigate} from 'react-router-dom';
 
 type QuizControlPageProps = {};
 
 const QuizControlSessionPage: React.FC<QuizControlPageProps> = ({}) => {
 
-    const { getQuizList, startSession, quizList, idSession, startedSessions } = quizStore;
+    const { getQuizList, startSession, quizList, idSession, startedSessions, getSessionList } = quizStore;
 
     const [sessionLink, setSessionLink] = useState<string>("");
 
     const navigate = useNavigate();
 
     useEffect(() => {
-        if (!userStore.isAuth && !document.cookie.includes('JWT_AUTH_TOKEN')) {
-            navigate('/login');
-        } else {
-            getQuizList();
-        }
-    }, [userStore.isAuth])
+        if (idSession) setSessionLink(`http://localhost:3000/quizSession/${idSession}`)
+        getSessionList();
+    }, [idSession])
 
     useEffect(() => {
-        if (idSession) setSessionLink(`http://localhost:3000/quizSession/${idSession}`)
-    }, [idSession])
+        getQuizList();
+    }, [])
 
     const createSessionHandler = (quiz: QuizItem ): void => {
         startSession(quiz);
@@ -55,8 +51,8 @@ const QuizControlSessionPage: React.FC<QuizControlPageProps> = ({}) => {
             <Typography variant="h6">Список созданных сессий:</Typography>
             {startedSessions.length && startedSessions.map((item) =>
                 <div className={classes.sessionCard}>
-                    <Typography>{`${item.quizName} ${item.sessionId}`}</Typography>
-                    <Button onClick={() => navigateToControlGameplayPage(item.sessionId)}>Управлять</Button>
+                    <Typography>{`${item.quizName} ${item.id}`}</Typography>
+                    <Button onClick={() => navigateToControlGameplayPage(item.id)}>Управлять</Button>
                 </div>
 
             )}

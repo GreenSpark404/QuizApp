@@ -18,6 +18,7 @@ class QuizStore {
             idSession: observable,
             startedSessions: observable,
             getQuizList: action.bound,
+            getSessionList: action.bound,
             startSession: action.bound,
         });
     }
@@ -33,13 +34,23 @@ class QuizStore {
         }
     }
 
+    async getSessionList(): Promise<void> {
+        try {
+            const sessionList = await service.loadSessionList();
+            runInAction(() => {
+                this.startedSessions = sessionList;
+            });
+        } catch (e) {
+            console.log(e)
+        }
+    }
+
     async startSession(quiz: QuizItem): Promise<void> {
         try {
             const idSession = await service.startSession(quiz.id);
             if (!!idSession) {
                 runInAction(() => {
                     this.idSession = idSession;
-                    this.startedSessions.push({ quizName: quiz.name, sessionId: idSession})
                 });
             }
         } catch (e) {

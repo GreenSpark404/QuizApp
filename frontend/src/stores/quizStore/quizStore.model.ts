@@ -5,6 +5,6 @@ export type QuizItem = {
 };
 
 export type StartedSession = {
+    id: string,
     quizName: string,
-    sessionId: string,
 }
