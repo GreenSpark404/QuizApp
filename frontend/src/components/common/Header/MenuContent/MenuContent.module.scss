@@ -2,7 +2,17 @@
   height: 40vh;
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
-  align-items: flex-end;
-  padding: 15px;
+  justify-content: space-between;
+  padding: 25px;
+
+  .createQuizButtonWrapper {
+    margin-top: 20px;
+  }
+
+  .logoutWrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: flex-end;
+  }
 }

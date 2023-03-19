@@ -6,6 +6,7 @@ import { IconButton, SwipeableDrawer } from '@material-ui/core';
 import MenuContent from './MenuContent';
 import classes from './Header.module.scss'
 import MenuIcon from '@material-ui/icons/Menu';
+import authStore from '../../../stores/authStore';
 
 const Header = ():JSX.Element => {
 
@@ -28,7 +29,7 @@ const Header = ():JSX.Element => {
 
     const iOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
 
-    const isVisibleMenu = document.cookie.includes('JWT_AUTH_TOKEN');
+    const isVisibleMenu = document.cookie.includes('JWT_AUTH_TOKEN') || authStore.isAuth;
 
     return (
         <div className={classes.component}>

@@ -20,6 +20,7 @@ class QuizStore {
             getQuizList: action.bound,
             getSessionList: action.bound,
             startSession: action.bound,
+            destroySession: action.bound,
         });
     }
 
@@ -40,6 +41,14 @@ class QuizStore {
             runInAction(() => {
                 this.startedSessions = sessionList;
             });
+        } catch (e) {
+            console.log(e)
+        }
+    }
+
+    async destroySession(sessionId: string): Promise<void> {
+        try {
+            await service.destroySession(sessionId);
         } catch (e) {
             console.log(e)
         }

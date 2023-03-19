@@ -30,9 +30,6 @@ const QuizGameplayPage: React.FC<QuizGameplayPageProps> = ({}) => {
     <div className={classes.component}>
       <Header />
         <div className={classes.title}>
-            <Typography color="textPrimary" variant="h6">
-                {`id сессии ${sessionId}`}
-            </Typography>
             <Typography
                 variant="h4"
                 color="primary"

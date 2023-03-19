@@ -1,8 +1,11 @@
 .component {
   height: 100vh;
-  background-color: #edeef0;
 
   .content {
-    padding-top: 70px;
+    padding: 70px 15px 15px 15px;
+
+    .destroySessionWrapper {
+      text-align: end;
+    }
   }
 }

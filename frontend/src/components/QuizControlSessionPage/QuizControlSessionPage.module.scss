@@ -12,8 +12,9 @@
       display: flex;
       flex-direction: column;
 
-      &:last-child {
-        align-items: flex-end;
+      .controlButtonWrapper {
+        display: flex;
+        justify-content: flex-end;
       }
     }
   }

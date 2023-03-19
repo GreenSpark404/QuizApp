@@ -22,6 +22,13 @@ const service = {
             .then((response) => response.data);
     },
 
+    destroySession(sessionId: string) {
+        return axios.post(`http://localhost:8080/api/gm/${sessionId}/close-session`, null, {
+            withCredentials: true
+        })
+            .then((response) => response.data);
+    },
+
     regPlayer(sessionId: string, player: object) {
         return axios.post(`http://localhost:8080/api/auth/${sessionId}/register`, player)
             .then((response) => response.data);
