@@ -1,5 +1,23 @@
 import {action, makeObservable, observable, runInAction} from 'mobx';
 import service from "./authStore.service";
+import axios, { AxiosResponse } from 'axios';
+import authStore from './authStore'
+
+const responseInterceptorErrorCallback = async (error: any): Promise<any> => {
+
+    const isUnauthorized: boolean = error.response.status === 401;
+
+    if (isUnauthorized) {
+        console.log('Interceptor logout');
+        await authStore.logout()
+        return Promise.reject(error);
+    }
+    return Promise.reject(error);
+};
+
+const responseInterceptorCallback = (response: AxiosResponse) => {
+    return response;
+};
 
 class AuthStore {
 
@@ -13,6 +31,10 @@ class AuthStore {
             login: action.bound,
             logout: action.bound,
         });
+        axios.interceptors.response.use(
+            responseInterceptorCallback,
+            responseInterceptorErrorCallback,
+        );
     }
 
     async login(login: string, password: string): Promise<void> {
@@ -32,7 +54,9 @@ class AuthStore {
 
     async logout(): Promise<void> {
         document.cookie = "JWT_AUTH_TOKEN"+'=; Max-Age=-99999999;';
-        this.isAuth = false;
+        runInAction(() => {
+            this.isAuth = false;
+        });
     }
 }
 export default new AuthStore();
