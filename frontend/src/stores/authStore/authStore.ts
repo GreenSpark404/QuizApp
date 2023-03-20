@@ -9,7 +9,7 @@ const responseInterceptorErrorCallback = async (error: any): Promise<any> => {
 
     if (isUnauthorized) {
         console.log('Interceptor logout');
-        await authStore.logout()
+        await authStore.logout();
         return Promise.reject(error);
     }
     return Promise.reject(error);

@@ -1,4 +1,46 @@
 .component {
   padding: 70px 15px 15px 15px;
 
+  .buttonsWrapper {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  .createQuizSection {
+    padding: 15px;
+    margin: 20px 0 20px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+
+
+
+    .accordionDetails {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+  }
+  .addQuestionWrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+
+    .questionFormWrapper {
+
+      @extend .addQuestionWrapper;
+
+      .answerWrapper {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+      }
+
+      .addAnswerButtonWrapper {
+        display: flex;
+        justify-content: flex-end;
+      }
+    }
+  }
 }
