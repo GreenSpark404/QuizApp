@@ -1,6 +1,11 @@
 .component {
   padding: 70px 15px 15px 15px;
 
+  .addQuestionButton {
+    margin-top: 15px;
+    margin-bottom: 20px;
+  }
+
   .buttonsWrapper {
     display: flex;
     flex-direction: row;
@@ -14,7 +19,16 @@
     flex-direction: column;
     gap: 15px;
 
+    .questionItemWrapper {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
 
+      .questionTextWrapper {
+        display: flex;
+        align-items: center;
+      }
+    }
 
     .accordionDetails {
       display: flex;
@@ -23,24 +37,30 @@
     }
   }
   .addQuestionWrapper {
+    padding: 15px;
     display: flex;
     flex-direction: column;
     gap: 15px;
 
     .questionFormWrapper {
 
-      @extend .addQuestionWrapper;
+      .questionTextField {
+        margin-bottom: 20px;
+      }
 
       .answerWrapper {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
+
+        .answerItem {
+          margin-bottom: 15px;
+          display: flex;
+          flex-direction: row;
+        }
       }
 
-      .addAnswerButtonWrapper {
-        display: flex;
-        justify-content: flex-end;
-      }
     }
   }
+}
+
+#{'div[class="MuiListItemIcon-root"]'} {
+  min-width: 30px;
 }

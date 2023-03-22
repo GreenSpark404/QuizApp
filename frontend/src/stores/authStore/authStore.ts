@@ -53,6 +53,7 @@ class AuthStore {
     }
 
     async logout(): Promise<void> {
+        console.log('logout');
         document.cookie = "JWT_AUTH_TOKEN"+'=; Max-Age=-99999999;';
         runInAction(() => {
             this.isAuth = false;

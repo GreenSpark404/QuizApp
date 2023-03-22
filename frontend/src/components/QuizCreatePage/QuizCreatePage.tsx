@@ -5,53 +5,26 @@ import Header from '../common/Header';
 import Button from '@material-ui/core/Button';
 import { useNavigate } from 'react-router-dom';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
-import { FormControlLabel, List, ListItem, ListItemIcon, Switch, TextField } from '@material-ui/core';
+import {
+    FormControlLabel,
+    List,
+    ListItem,
+    ListItemIcon,
+    Radio,
+    RadioGroup,
+    TextField,
+    Paper
+} from '@material-ui/core';
 import SaveIcon from '@material-ui/icons/Save';
-import {Accordion, AccordionDetails, AccordionSummary, IconButton, Paper} from '@material-ui/core';
 import HelpOutlineIcon from '@material-ui/icons/HelpOutline';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Typography from '@material-ui/core/Typography';
+import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import { observer } from 'mobx-react';
-
-type Question = {
-    questionText: string,
-    correctAnswer: string,
-    answers: Array<string>,
-};
-
-type Answers = Omit<Question, "questionText">
-
-const mockQuestions = [
-    {
-        questionText: 'Вопрос 1',
-        correctAnswer: '',
-        answers: [],
-    },
-    {
-        questionText: 'Вопрос 2',
-        correctAnswer: '',
-        answers: [],
-    },
-    {
-        questionText: 'Вопрос 3',
-        correctAnswer: '',
-        answers: [],
-    },
-];
-
-const mockAnswersFor1stQuestion =
-{
-    questionText: 'Вопрос 1',
-    correctAnswer: 'Правильный ответ',
-    answers: ['Неправильный ответ', 'Неправильный ответ', 'Неправильный ответ'],
-};
+import _ from 'lodash';
+import { Question, QuizFullItem } from '../../stores/quizStore/quizStore.model';
+import quizStore from '../../stores/quizStore';
 
 
-const newQuestion: Question = {
-    questionText: '',
-    correctAnswer: '',
-    answers: [],
-}
 
 const QuizCreatePage: React.FC = () => {
 
@@ -59,19 +32,69 @@ const QuizCreatePage: React.FC = () => {
 
     const [quizName, setQuizName] = useState<string>();
     const [quizDescription, setQuizDescription] = useState<string>();
-
     const [questionList, setQuestionList] = useState<Array<Question>>([]);
-    const [answers, setAnswers] = useState<Array<Answers>>([]);
+
+    const [question, setQuestion] = useState<string>('');
+    const [answers, setAnswers] = useState<Array<string>>([]);
+    const [correctAnswer, setCorrectAnswer] = useState<string>('')
 
     const addQuestionHandler = (): void => {
-        //setQuestionList([...questionList, newQuestion])
+        const newQuestion: Question = {
+            questionText: question,
+            correctAnswer: answers[Number(correctAnswer)-1],
+            answers: answers,
+        }
+
+        if (questionList.some((question) => _.isEqual(question.questionText, newQuestion.questionText))) return
+        setQuestionList([...questionList, newQuestion])
     };
 
-    const addAnswerHandler = (): void => {
-        //setQuestionList([...questionList, newQuestion])
+    const answerHandler = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, answer: string): void => {
+        const addAnswer = (answer: number) => {
+            let newAnswers = answers;
+            newAnswers[answer] = e.target.value
+            setAnswers([...newAnswers])
+        }
+        switch (answer) {
+            case '1':
+                return addAnswer(0);
+            case '2':
+                return addAnswer(1);
+            case '3':
+                return addAnswer(2);
+            case '4':
+                return addAnswer(3);
+        }
+    }
+
+    const correctAnswerHandler = (event: React.ChangeEvent<{}>): void => {
+        setCorrectAnswer((event.target as HTMLInputElement).value)
     };
 
-    console.log(questionList);
+    const addQuestionText = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
+        setQuestion(e.target.value)
+    };
+
+    const deleteQuestionHandler = (questionName: string): void => {
+        setQuestionList(questionList.filter((question) => question.questionText !== questionName))
+    };
+
+    const addQuizHandler = (): void => {
+        const newQuiz: QuizFullItem = {
+            name: quizName || '',
+            description: quizDescription || '',
+            questionList: questionList,
+        };
+        quizStore.addQuiz(newQuiz);
+    };
+
+    const isError = (id: number): boolean => {
+        const currentAnswer = _.clone(answers[id]);
+        if (currentAnswer !== "") {
+            return answers.filter((answer, i) => i !== id).includes(currentAnswer);
+        }
+        return false
+    }
 
   return (
     <div className={classes.component}>
@@ -88,88 +111,130 @@ const QuizCreatePage: React.FC = () => {
             <Button
                 variant="text"
                 endIcon={<SaveIcon />}
+                disabled={!quizName || !quizDescription || !questionList.length}
+                onClick={addQuizHandler}
             >
                 Сохранить
             </Button>
         </div>
-            <Paper elevation={3} className={classes.createQuizSection}>
-                <TextField
-                    variant="outlined"
-                    value={quizName}
-                    placeholder="Название квиза"
-                    onChange={e => setQuizName(e.target.value)}
-                />
-                <TextField
-                    variant="outlined"
-                    value={quizDescription}
-                    placeholder="Описание"
-                    onChange={e => setQuizDescription(e.target.value)}
-                />
-                <List dense>
-                    {mockQuestions.map((q) => (
-                        <ListItem>
-                            <ListItemIcon>
-                                <HelpOutlineIcon />
-                            </ListItemIcon>
-                            {q.questionText}
-                        </ListItem>))
-                    }
-                </List>
-            </Paper>
-            <div className={classes.addQuestionWrapper}>
-                <div>
-                    <Button
-                        variant="contained"
-                        onClick={addQuestionHandler}
-                    >
-                        Добавить вопрос
-                    </Button>
-                </div>
-                <div className={classes.questionFormWrapper}>
-                    <TextField
-                        variant="outlined"
-                        placeholder="Вопрос"
-                        fullWidth
-                    />
-                    <List dense>
-                        <ListItem>
-                            <ListItemIcon>
-                                <div style={{color: 'green'}}>Ответ</div>
-                            </ListItemIcon>
-                            {mockAnswersFor1stQuestion.correctAnswer}
-                        </ListItem>
-                        {mockAnswersFor1stQuestion.answers.map((a) => (
-                            <ListItem>
+        <Paper elevation={3} className={classes.createQuizSection}>
+            <TextField
+                variant="outlined"
+                value={quizName}
+                placeholder="Название квиза"
+                onChange={e => setQuizName(e.target.value)}
+            />
+            <TextField
+                variant="outlined"
+                value={quizDescription}
+                placeholder="Описание"
+                onChange={e => setQuizDescription(e.target.value)}
+            />
+            <List dense>
+                {questionList ? questionList.map((q) => (
+                    <ListItem>
+                        <div className={classes.questionItemWrapper}>
+                            <div className={classes.questionTextWrapper}>
                                 <ListItemIcon>
-                                    Ответ
+                                    <HelpOutlineIcon />
                                 </ListItemIcon>
-                                {a}
-                            </ListItem>))
-                        }
-                    </List>
-                    <div className={classes.addAnswerButtonWrapper}>
-                        <Button
-                            variant="contained"
-                            onClick={addAnswerHandler}
-                        >
-                            Добавить ответ
-                        </Button>
-                    </div>
-                    <div className={classes.answerWrapper}>
-                        <TextField
-                            variant="outlined"
-                            placeholder="Ответ"
-                            fullWidth
-                        />
-                        <FormControlLabel
-                            value="bottom"
-                            control={<Switch color="primary" />}
-                            label="Правильный"
-                            labelPlacement="bottom"
-                        />
-                    </div>
+                                {q.questionText}
+                            </div>
+                            <Button
+                                variant="text"
+                                onClick={() => deleteQuestionHandler(q.questionText)}
+                                endIcon={<DeleteForeverIcon />}
+                            />
+                        </div>
+                    </ListItem>)) : <Typography>Список вопросов пуст</Typography>
+                }
+            </List>
+        </Paper>
+            <Button
+                variant="contained"
+                onClick={addQuestionHandler}
+                fullWidth
+                className={classes.addQuestionButton}
+                disabled={!question || !correctAnswer || answers.length < 4}
+            >
+                Добавить вопрос
+            </Button>
+        <Paper elevation={3} className={classes.addQuestionWrapper}>
+            <div className={classes.questionFormWrapper}>
+                <TextField
+                    className={classes.questionTextField}
+                    value={question}
+                    variant="outlined"
+                    placeholder="Вопрос"
+                    fullWidth
+                    onChange={e => addQuestionText(e)}
+                />
+                <div className={classes.answerWrapper}>
+                    <RadioGroup>
+                        <div className={classes.answerItem}>
+                            <FormControlLabel
+                                value='1'
+                                control={<Radio />}
+                                label="правильный"
+                                onChange={e => correctAnswerHandler(e)}
+                            />
+                            <TextField
+                                error={isError(0)}
+                                variant="outlined"
+                                label={isError(0) ? "Уже есть" : "Ответ 1"}
+                                fullWidth
+                                onChange={(e) => answerHandler(e, '1')}
+                            />
+                        </div>
+                        <div className={classes.answerItem}>
+                            <FormControlLabel
+                                value='2'
+                                control={<Radio />}
+                                label="правильный"
+                                onChange={e => correctAnswerHandler(e)}
+                            />
+                            <TextField
+                                error={isError(1)}
+                                variant="outlined"
+                                label={isError(1) ? "Уже есть" : "Ответ 2"}
+                                fullWidth
+                                onChange={(e) => answerHandler(e, '2')}
+                            />
+                        </div>
+                        <div className={classes.answerItem}>
+                            <FormControlLabel
+                                value='3'
+                                control={<Radio />}
+                                label="правильный"
+                                onChange={e => correctAnswerHandler(e)}
+                            />
+                            <TextField
+                                error={isError(2)}
+                                variant="outlined"
+                                label={isError(2) ? "Уже есть" : "Ответ 3"}
+                                fullWidth
+                                onChange={(e) => answerHandler(e, '3')}
+                            />
+                        </div>
+                        <div className={classes.answerItem}>
+                            <FormControlLabel
+                                value='4'
+                                control={<Radio />}
+                                label="правильный"
+                                onChange={e => correctAnswerHandler(e)}
+                            />
+                            <TextField
+                                error={isError(3)}
+                                variant="outlined"
+                                label={isError(3) ? "Уже есть" : "Ответ 4"}
+                                fullWidth
+                                onChange={(e) => answerHandler(e, '4')}
+                            />
+                        </div>
+                    </RadioGroup>
                 </div>
             </div>
+        </Paper>
     </div>
   );
 };

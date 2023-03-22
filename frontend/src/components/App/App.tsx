@@ -6,7 +6,7 @@ import classes from './App.module.scss'
 import QuizControlSessionPage from '../QuizControlSessionPage';
 import {useNavigate} from "react-router-dom";
 
-function App(): JSX.Element {
+const App = (): JSX.Element =>  {
 
     const navigate = useNavigate();
 

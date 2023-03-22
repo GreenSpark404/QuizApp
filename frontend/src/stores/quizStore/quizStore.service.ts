@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { QuizFullItem } from './quizStore.model';
 
 const service = {
     loadQuizList() {
@@ -32,6 +33,13 @@ const service = {
     regPlayer(sessionId: string, player: object) {
         return axios.post(`http://localhost:8080/api/auth/${sessionId}/register`, player)
             .then((response) => response.data);
-    }
+    },
+
+    addQuiz(quiz: QuizFullItem) {
+        return axios.put(`http://localhost:8080/api/gm/add-quiz`, quiz, {
+            withCredentials: true
+        })
+            .then((response) => response.data);
+    },
 }
 export default service

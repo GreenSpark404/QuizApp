@@ -4,7 +4,15 @@ import classes from './QuizControlSessionPage.module.scss';
 import quizStore, {QuizItem} from '../../stores/quizStore';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import {observer} from 'mobx-react';
-import {Accordion, AccordionDetails, AccordionSummary, IconButton, Paper, TextField} from '@material-ui/core';
+import {
+    Accordion,
+    AccordionDetails,
+    AccordionSummary,
+    Backdrop, CircularProgress,
+    IconButton,
+    Paper,
+    TextField
+} from '@material-ui/core';
 import FileCopyIcon from '@material-ui/icons/FileCopy';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
@@ -15,7 +23,7 @@ type QuizControlPageProps = {};
 
 const QuizControlSessionPage: React.FC<QuizControlPageProps> = ({}) => {
 
-    const { getQuizList, startSession, quizList, idSession, startedSessions, getSessionList } = quizStore;
+    const { getQuizList, startSession, quizList, idSession, startedSessions, getSessionList, isLoading } = quizStore;
 
     const navigate = useNavigate();
 
@@ -38,7 +46,8 @@ const QuizControlSessionPage: React.FC<QuizControlPageProps> = ({}) => {
     const getLink = (sessionId: string | undefined): string => {
         if (sessionId) {
             return `http://localhost:3000/quizSession/${sessionId}`;
-        } else return '';
+        }
+        return '';
     };
 
     const copySessionLinkHandler = (sessionId: string | undefined): void => {
@@ -48,63 +57,71 @@ const QuizControlSessionPage: React.FC<QuizControlPageProps> = ({}) => {
     const quizListSessionsIntersection = (quizName: string) => _.find(startedSessions, { quizName: quizName });
 
   return (
-    <div className={classes.component}>
+      <>
+          <Backdrop
+              open={isLoading}
+              style={{zIndex: 2,
+              color: '#fff'}}
+          >
+              <CircularProgress color="inherit" />
+          </Backdrop>
+          <div className={classes.component}>
+              <Paper
+                  elevation={3}
+                  className={classes.sessionsList}
+              >
+                  <Typography variant="h6">Список созданных сессий:</Typography>
+                  {startedSessions.length && startedSessions.map((item) =>
+                      <div className={classes.sessionCard}>
+                          <Typography>{`${item.quizName} ${item.id}`}</Typography>
+                          <div className={classes.controlButtonWrapper}>
+                              <Button onClick={() => navigateToControlGameplayPage(item.id)}>Управлять</Button>
+                          </div>
+                      </div>
 
-        <Paper
-            elevation={3}
-            className={classes.sessionsList}
-        >
-            <Typography variant="h6">Список созданных сессий:</Typography>
-            {startedSessions.length && startedSessions.map((item) =>
-                <div className={classes.sessionCard}>
-                    <Typography>{`${item.quizName} ${item.id}`}</Typography>
-                    <div className={classes.controlButtonWrapper}>
-                        <Button onClick={() => navigateToControlGameplayPage(item.id)}>Управлять</Button>
-                    </div>
-                </div>
-
-            )}
-        </Paper>
-        <Typography variant="h6" className={classes.quizListTitle}>Список квизов:</Typography>
-        {quizList.length ? quizList.map(quiz =>
-            <Accordion key={quiz.id} className={classes.accordion}>
-                <AccordionSummary
-                    expandIcon={<ExpandMoreIcon />}
-                >
-                    <Typography>{quiz.name}</Typography>
-                </AccordionSummary>
-                <AccordionDetails className={classes.accordionDetails}>
-                    <Typography>
-                        {quiz.description}
-                    </Typography>
-                    <Button
-                        variant='contained'
-                        onClick={() => createSessionHandler(quiz)}
-                        disabled={!!quizListSessionsIntersection(quiz.name)}
-                    >
-                        Создать сессию
-                    </Button>
-                    <div className={classes.textFieldWrapper}>
-                        <TextField
-                            variant="outlined"
-                            placeholder="Ссылка на сессию"
-                            value={getLink(quizListSessionsIntersection(quiz.name)?.id)}
-                            fullWidth
-                        />
-                        <IconButton color="primary">
-                            <FileCopyIcon
-                                color="action"
-                                onClick={() => copySessionLinkHandler(quizListSessionsIntersection(quiz.name)?.id)}
-                                className={classes.copyButton}
-                            />
-                        </IconButton>
-                    </div>
-                </AccordionDetails>
-            </Accordion>
-        ) : (
-            <>Список пуст</>
-        )}
-    </div>
+                  )}
+              </Paper>
+              <Typography variant="h6" className={classes.quizListTitle}>Список квизов:</Typography>
+              {quizList.length ? quizList.map(quiz =>
+                  <Accordion key={quiz.id} className={classes.accordion}>
+                      <AccordionSummary
+                          expandIcon={<ExpandMoreIcon />}
+                      >
+                          <Typography>{quiz.name}</Typography>
+                      </AccordionSummary>
+                      <AccordionDetails className={classes.accordionDetails}>
+                          <Typography>
+                              {quiz.description}
+                          </Typography>
+                          <Button
+                              variant='contained'
+                              onClick={() => createSessionHandler(quiz)}
+                              disabled={!!quizListSessionsIntersection(quiz.name)}
+                          >
+                              Создать сессию
+                          </Button>
+                          <div className={classes.textFieldWrapper}>
+                              <TextField
+                                  variant="outlined"
+                                  placeholder="Ссылка на сессию"
+                                  value={getLink(quizListSessionsIntersection(quiz.name)?.id)}
+                                  fullWidth
+                              />
+                              <IconButton color="primary">
+                                  <FileCopyIcon
+                                      color="action"
+                                      onClick={() => copySessionLinkHandler(quizListSessionsIntersection(quiz.name)?.id)}
+                                      className={classes.copyButton}
+                                  />
+                              </IconButton>
+                          </div>
+                      </AccordionDetails>
+                  </Accordion>
+              ) : (
+                  <>Список пуст</>
+              )}
+          </div>
+      </>
   );
 };
 
