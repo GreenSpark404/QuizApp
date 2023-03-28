@@ -11,6 +11,7 @@ import org.greenspark404.model.entity.Quiz;
 import org.greenspark404.service.GameSessionService;
 import org.greenspark404.service.QuizService;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -45,6 +46,11 @@ public class GameMasterController {
     @PutMapping("add-quiz")
     public void addQuiz(@RequestBody QuizDTO quiz) {
         quizService.save(quizMapper.toEntity(quiz));
+    }
+
+    @DeleteMapping("{quizId}/remove")
+    public void removeQuiz(@PathVariable String quizId) {
+        quizService.delete(quizId);
     }
 
     @PostMapping("{quizId}/start-session")

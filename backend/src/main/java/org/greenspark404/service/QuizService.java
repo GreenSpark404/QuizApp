@@ -23,4 +23,8 @@ public class QuizService {
     public void save(Quiz quiz) {
         quizRepository.save(quiz);
     }
+
+    public void delete(String quizId) {
+        quizRepository.deleteById(quizId);
+    }
 }
