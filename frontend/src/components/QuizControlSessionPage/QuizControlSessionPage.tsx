@@ -18,6 +18,8 @@ import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import {useNavigate} from 'react-router-dom';
 import _ from 'lodash';
+import authStore from '../../stores/authStore/authStore';
+import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 
 type QuizControlPageProps = {};
 
@@ -26,6 +28,12 @@ const QuizControlSessionPage: React.FC<QuizControlPageProps> = ({}) => {
     const { getQuizList, startSession, quizList, idSession, startedSessions, getSessionList, isLoading } = quizStore;
 
     const navigate = useNavigate();
+
+    useEffect(() => {
+        if (!document.cookie.includes('JWT_AUTH_TOKEN')) {
+            navigate('/login')
+        }
+    }, [authStore.isAuth, document.cookie])
 
     useEffect(() => {
         getQuizList();
@@ -55,6 +63,10 @@ const QuizControlSessionPage: React.FC<QuizControlPageProps> = ({}) => {
     };
 
     const quizListSessionsIntersection = (quizName: string) => _.find(startedSessions, { quizName: quizName });
+
+    const deleteQuizHandler = (id: string) => {
+        quizStore.deleteQuiz(id);
+    };
 
   return (
       <>
@@ -90,9 +102,17 @@ const QuizControlSessionPage: React.FC<QuizControlPageProps> = ({}) => {
                           <Typography>{quiz.name}</Typography>
                       </AccordionSummary>
                       <AccordionDetails className={classes.accordionDetails}>
-                          <Typography>
-                              {quiz.description}
-                          </Typography>
+                          <div className={classes.description}>
+                              <Typography>{quiz.description}</Typography>
+                              <Button
+                                  variant="text"
+                                  onClick={() => deleteQuizHandler(quiz.id)}
+                                  endIcon={<DeleteForeverIcon />}
+                                  className={classes.deleteQuiz}
+                              >
+                                  <Typography variant="button">Удалить квиз</Typography>
+                              </Button>
+                          </div>
                           <Button
                               variant='contained'
                               onClick={() => createSessionHandler(quiz)}

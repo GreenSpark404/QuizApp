@@ -41,5 +41,12 @@ const service = {
         })
             .then((response) => response.data);
     },
+
+    deleteQuiz(quizId: string) {
+        return axios.delete(`http://localhost:8080/api/gm/${quizId}/remove`, {
+            withCredentials: true
+        })
+            .then((response) => response.data);
+    },
 }
 export default service

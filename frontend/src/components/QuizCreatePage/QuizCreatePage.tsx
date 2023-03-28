@@ -15,6 +15,7 @@ import {
     TextField,
     Paper
 } from '@material-ui/core';
+import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
 import SaveIcon from '@material-ui/icons/Save';
 import HelpOutlineIcon from '@material-ui/icons/HelpOutline';
 import Typography from '@material-ui/core/Typography';
@@ -85,7 +86,7 @@ const QuizCreatePage: React.FC = () => {
             description: quizDescription || '',
             questionList: questionList,
         };
-        quizStore.addQuiz(newQuiz);
+        quizStore.addQuiz(newQuiz).finally(() => navigate('/'));
     };
 
     const isError = (id: number): boolean => {
@@ -169,13 +170,17 @@ const QuizCreatePage: React.FC = () => {
                     fullWidth
                     onChange={e => addQuestionText(e)}
                 />
+                <div className={classes.chooseCorrect}>
+                    <ArrowDownwardIcon />
+                    <Typography >Выбери правильный</Typography>
+                </div>
                 <div className={classes.answerWrapper}>
                     <RadioGroup>
                         <div className={classes.answerItem}>
                             <FormControlLabel
                                 value='1'
                                 control={<Radio />}
-                                label="правильный"
+                                label=""
                                 onChange={e => correctAnswerHandler(e)}
                             />
                             <TextField
@@ -190,7 +195,7 @@ const QuizCreatePage: React.FC = () => {
                             <FormControlLabel
                                 value='2'
                                 control={<Radio />}
-                                label="правильный"
+                                label=""
                                 onChange={e => correctAnswerHandler(e)}
                             />
                             <TextField
@@ -205,7 +210,7 @@ const QuizCreatePage: React.FC = () => {
                             <FormControlLabel
                                 value='3'
                                 control={<Radio />}
-                                label="правильный"
+                                label=""
                                 onChange={e => correctAnswerHandler(e)}
                             />
                             <TextField
@@ -220,7 +225,7 @@ const QuizCreatePage: React.FC = () => {
                             <FormControlLabel
                                 value='4'
                                 control={<Radio />}
-                                label="правильный"
+                                label=""
                                 onChange={e => correctAnswerHandler(e)}
                             />
                             <TextField

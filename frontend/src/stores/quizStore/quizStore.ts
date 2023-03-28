@@ -96,5 +96,14 @@ class QuizStore {
             console.log(e)
         }
     }
+
+    async deleteQuiz(quizId: string): Promise<void> {
+        try {
+            await service.deleteQuiz(quizId);
+            this.getQuizList();
+        } catch (e) {
+            console.log(e)
+        }
+    }
 }
 export default new QuizStore();
