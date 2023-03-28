@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import classes from './QuizControlGameplayPage.module.scss';
 import Header from '../common/Header';
@@ -25,6 +25,10 @@ const QuizControlGameplayPage: React.FC<QuizControlGameplayPageProps> = ({}) => 
         navigate('/');
     };
 
+    useEffect(() => {
+        quizStore.getCurrentSessionQuiz(params.params['*']!!)
+    }, [])
+
   return (
     <div className={classes.component}>
         <Header />
@@ -46,6 +50,9 @@ const QuizControlGameplayPage: React.FC<QuizControlGameplayPageProps> = ({}) => 
                 </Button>
             </div>
             {lastMessage}
+            <div>{quizStore.sessionDTO.quizName}</div>
+            <div>кол-во вопросов{quizStore.sessionDTO.questionsCount}</div>
+            <div>кол-во игроков{quizStore.sessionDTO.totalPlayers}</div>
         </div>
     </div>
   );

@@ -1,6 +1,6 @@
 import { action, makeObservable, observable, runInAction } from 'mobx';
 import service from './quizStore.service';
-import { QuizFullItem, QuizItem, StartedSession } from './quizStore.model';
+import { QuizFullItem, QuizItem, StartedSession, sessionDTO } from './quizStore.model';
 
 class QuizStore {
 
@@ -12,6 +12,14 @@ class QuizStore {
 
     isLoading: boolean = false;
 
+    sessionDTO: sessionDTO = {
+        id: '',
+        questionsCount: 0,
+        quizName: '',
+        scoreboardMap: {},
+        totalPlayers: 0,
+    };
+
     constructor() {
         makeObservable(this, {
             quizList: observable,
@@ -22,6 +30,9 @@ class QuizStore {
             getSessionList: action.bound,
             startSession: action.bound,
             destroySession: action.bound,
+            deleteQuiz: action.bound,
+            getCurrentSessionQuiz: action.bound,
+            sessionDTO: observable,
         });
     }
 
@@ -105,5 +116,17 @@ class QuizStore {
             console.log(e)
         }
     }
+
+    async getCurrentSessionQuiz(sessionId: string): Promise<void> {
+        try {
+            const sessionDTO = await service.getCurrentSessionQuiz(sessionId);
+            runInAction(() => {
+                this.sessionDTO = sessionDTO;
+            })
+        } catch (e) {
+            console.log(e)
+        }
+    }
+
 }
 export default new QuizStore();

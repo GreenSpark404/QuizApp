@@ -48,5 +48,12 @@ const service = {
         })
             .then((response) => response.data);
     },
+
+    getCurrentSessionQuiz(sessionId: string) {
+        return axios.get(`http://localhost:8080/api/gm/${sessionId}/session`, {
+            withCredentials: true
+        })
+            .then((response) => response.data);
+    },
 }
 export default service
