@@ -33,6 +33,7 @@ class QuizStore {
             deleteQuiz: action.bound,
             getCurrentSessionQuiz: action.bound,
             sessionDTO: observable,
+            startNextQuestion: action.bound,
         });
     }
 
@@ -67,6 +68,14 @@ class QuizStore {
     async destroySession(sessionId: string): Promise<void> {
         try {
             await service.destroySession(sessionId);
+        } catch (e) {
+            console.log(e)
+        }
+    }
+
+    async startNextQuestion(sessionId: string): Promise<void> {
+        try {
+            await service.startNextQuestion(sessionId);
         } catch (e) {
             console.log(e)
         }

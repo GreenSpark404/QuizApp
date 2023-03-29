@@ -16,7 +16,7 @@ const MenuContent: React.FC<MenuContentProps> = ({}) => {
         await authStore.logout();
         navigate('/login');
     };
-    const isVisibleCreateQuiz = !location.pathname.includes('/createQuiz');
+    const isVisibleCreateQuiz = !location.pathname.includes('/createQuiz') && !location.pathname.includes('/quizSession');
 
   return (
     <div className={classes.component}>

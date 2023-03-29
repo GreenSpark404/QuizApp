@@ -8,10 +8,14 @@ import Button from '@material-ui/core/Button';
 import quizStore from '../../stores/quizStore';
 import { useNavigate, useParams } from 'react-router-dom';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import { Paper } from '@material-ui/core';
+import Typography from '@material-ui/core/Typography';
 
 type QuizControlGameplayPageProps = {};
 
 const QuizControlGameplayPage: React.FC<QuizControlGameplayPageProps> = ({}) => {
+
+    const { destroySession, startNextQuestion, getCurrentSessionQuiz, sessionDTO } = quizStore;
 
     const [lastMessage, setLastMessage] = useState<string>("");
 
@@ -21,12 +25,17 @@ const QuizControlGameplayPage: React.FC<QuizControlGameplayPageProps> = ({}) => 
     useSubscription("/dev", (message) => setLastMessage(message.body));
 
     const closeSessionHandler = (): void => {
-        quizStore.destroySession(params.params['*']!!);
+        destroySession(params.params['*']!!);
         navigate('/');
     };
 
+    const startNextQuestionHandler = async (): Promise<void> => {
+        await startNextQuestion(params.params['*']!!);
+        getCurrentSessionQuiz(params.params['*']!!)
+    };
+
     useEffect(() => {
-        quizStore.getCurrentSessionQuiz(params.params['*']!!)
+        getCurrentSessionQuiz(params.params['*']!!)
     }, [])
 
   return (
@@ -50,9 +59,24 @@ const QuizControlGameplayPage: React.FC<QuizControlGameplayPageProps> = ({}) => 
                 </Button>
             </div>
             {lastMessage}
-            <div>{quizStore.sessionDTO.quizName}</div>
-            <div>кол-во вопросов{quizStore.sessionDTO.questionsCount}</div>
-            <div>кол-во игроков{quizStore.sessionDTO.totalPlayers}</div>
+            <Paper elevation={3} className={classes.sessionInfoWrapper}>
+                <div className={classes.quizNameWrapper}>
+                    <Typography variant="h6">{sessionDTO.quizName}</Typography>
+                </div>
+                {!!sessionDTO.state && <Typography>Текущий вопрос: {sessionDTO.state.questionNumber}</Typography>}
+                <div>Кол-во вопросов: {sessionDTO.questionsCount}</div>
+                <div>Кол-во игроков: {sessionDTO.totalPlayers}</div>
+            </Paper>
+            <Paper elevation={3} className={classes.sessionInfoWrapper}>
+                <Button
+                    variant="outlined"
+                    color="primary"
+                    onClick={startNextQuestionHandler}
+                    fullWidth
+                >
+                    {!sessionDTO.state ? 'Старт игровой сессии' : 'Следующий вопрос'}
+                </Button>
+            </Paper>
         </div>
     </div>
   );

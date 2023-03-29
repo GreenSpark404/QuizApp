@@ -5,7 +5,20 @@
     padding: 70px 15px 15px 15px;
 
     .destroySessionWrapper {
+      margin-top: 8px;
       text-align: end;
+    }
+
+    .sessionInfoWrapper {
+      margin-top: 10px;
+      padding: 25px;
+
+      .quizNameWrapper {
+        padding: 10px;
+        background-color: #edeef0;
+        border-radius: 8px;
+        margin-bottom: 15px;
+      }
     }
   }
 }

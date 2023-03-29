@@ -23,6 +23,13 @@ const service = {
             .then((response) => response.data);
     },
 
+    startNextQuestion(sessionId: string) {
+        return axios.post(`http://localhost:8080/api/gm/${sessionId}/next-question`, null, {
+            withCredentials: true
+        })
+            .then((response) => response.data);
+    },
+
     destroySession(sessionId: string) {
         return axios.post(`http://localhost:8080/api/gm/${sessionId}/close-session`, null, {
             withCredentials: true

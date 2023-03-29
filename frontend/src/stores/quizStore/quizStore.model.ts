@@ -4,12 +4,20 @@ export type QuizItem = {
     description: string,
 };
 
+export type sessionState = {
+    answersCount: number,
+    correctAnswersCount: number,
+    question: Question,
+    questionNumber: number,
+}
+
 export type sessionDTO = {
     id: string,
     questionsCount: number,
     quizName: string,
     scoreboardMap: object,
     totalPlayers: number,
+    state?: sessionState
 }
 
 export type Question = {
