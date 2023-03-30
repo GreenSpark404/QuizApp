@@ -94,8 +94,8 @@ const QuizControlSessionPage: React.FC<QuizControlPageProps> = ({}) => {
                   )}
               </Paper>
               <Typography variant="h6" className={classes.quizListTitle}>Список квизов:</Typography>
-              {quizList.length ? quizList.map(quiz =>
-                  <Accordion key={quiz.id} className={classes.accordion}>
+              {quizList.length ? quizList.map((quiz, id) =>
+                  <Accordion key={id} className={classes.accordion}>
                       <AccordionSummary
                           expandIcon={<ExpandMoreIcon />}
                       >

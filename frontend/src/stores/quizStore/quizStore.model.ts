@@ -9,6 +9,7 @@ export type sessionState = {
     correctAnswersCount: number,
     question: Question,
     questionNumber: number,
+    completed: boolean,
 }
 
 export type sessionDTO = {

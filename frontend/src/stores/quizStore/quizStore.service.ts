@@ -30,6 +30,13 @@ const service = {
             .then((response) => response.data);
     },
 
+    endQuestion(sessionId: string) {
+        return axios.post(`http://localhost:8080/api/gm/${sessionId}/end-question`, null, {
+            withCredentials: true
+        })
+            .then((response) => response.data);
+    },
+
     destroySession(sessionId: string) {
         return axios.post(`http://localhost:8080/api/gm/${sessionId}/close-session`, null, {
             withCredentials: true
@@ -56,7 +63,7 @@ const service = {
             .then((response) => response.data);
     },
 
-    getCurrentSessionQuiz(sessionId: string) {
+    getCurrentSession(sessionId: string) {
         return axios.get(`http://localhost:8080/api/gm/${sessionId}/session`, {
             withCredentials: true
         })

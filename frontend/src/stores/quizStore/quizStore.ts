@@ -31,9 +31,10 @@ class QuizStore {
             startSession: action.bound,
             destroySession: action.bound,
             deleteQuiz: action.bound,
-            getCurrentSessionQuiz: action.bound,
+            getCurrentSession: action.bound,
             sessionDTO: observable,
             startNextQuestion: action.bound,
+            endQuestion: action.bound,
         });
     }
 
@@ -76,6 +77,14 @@ class QuizStore {
     async startNextQuestion(sessionId: string): Promise<void> {
         try {
             await service.startNextQuestion(sessionId);
+        } catch (e) {
+            console.log(e)
+        }
+    }
+
+    async endQuestion(sessionId: string): Promise<void> {
+        try {
+            await service.endQuestion(sessionId);
         } catch (e) {
             console.log(e)
         }
@@ -126,9 +135,9 @@ class QuizStore {
         }
     }
 
-    async getCurrentSessionQuiz(sessionId: string): Promise<void> {
+    async getCurrentSession(sessionId: string): Promise<void> {
         try {
-            const sessionDTO = await service.getCurrentSessionQuiz(sessionId);
+            const sessionDTO = await service.getCurrentSession(sessionId);
             runInAction(() => {
                 this.sessionDTO = sessionDTO;
             })

@@ -10,14 +10,44 @@
     }
 
     .sessionInfoWrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
       margin-top: 10px;
       padding: 25px;
+
+      .accordion {
+        box-shadow: 0 3px 3px -2px rgba(0,0,0,0.2),0px 3px 4px 0px rgba(0,0,0,0.14),0px 1px 8px 0px rgba(0,0,0,0.12);
+
+        .accordionHeader {
+          display: flex;
+          flex-direction: column;
+        }
+
+        .accordionDetails {
+          display: flex;
+          flex-direction: column;
+
+          td {
+            background-color: #81c784;
+          }
+
+          .questionText {
+            margin-bottom: 15px;
+          }
+        }
+      }
 
       .quizNameWrapper {
         padding: 10px;
         background-color: #edeef0;
         border-radius: 8px;
         margin-bottom: 15px;
+
+        .playersCount {
+          display: flex;
+          justify-content: flex-end;
+        }
       }
     }
   }
