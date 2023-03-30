@@ -1,7 +1,6 @@
 package org.greenspark404.service;
 
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import org.greenspark404.component.GameSessionStorage;
 import org.greenspark404.model.domain.GameSession;
 import org.greenspark404.model.domain.GameState;
@@ -19,15 +18,13 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.locks.Lock;
 
 @Service
 @RequiredArgsConstructor
 public class GameSessionService {
     private final GameSessionStorage gameSessionStorage;
-    private final ReentrantLock lock = new ReentrantLock();
 
     public GameSession startSession(Quiz quiz) {
         GameSession session = gameSessionStorage.startSession(UUID.randomUUID().toString());
@@ -53,9 +50,14 @@ public class GameSessionService {
 
     public void registerAnswer(String sessionId, String answer) {
         GameSession session = gameSessionStorage.getSession(sessionId);
-        Player player = Objects.requireNonNull(session.getPlayerMap().get(ejectPlayerId()));
-        GameState state = session.getState();
-        if (state != null && lock.getHoldCount() == 0) {
+        Lock readLock = session.getLock().readLock();
+        readLock.lock();
+        try {
+            GameState state = session.getState();
+            if (state.getCompleted().get()) {
+                throw new IllegalStateException("Question already completed");
+            }
+            Player player = Objects.requireNonNull(session.getPlayerMap().get(ejectPlayerId()));
             state.getPlayersAnswerMap().put(player, answer);
             boolean isCorrect = Objects.equals(state.getQuestion().getCorrectAnswer(), answer);
             if (isCorrect) {
@@ -63,33 +65,45 @@ public class GameSessionService {
                 int points = 5 + Math.max((5 - pos), 0);
                 session.getScoreboardMap().computeIfPresent(player, (k, v) -> v + points);
             }
+        } finally {
+            readLock.unlock();
         }
     }
 
     public void nextQuestion(String sessionId) {
-        doWithLock(() -> {
-            GameSession session = gameSessionStorage.getSession(sessionId);
+        GameSession session = gameSessionStorage.getSession(sessionId);
+        Lock writeLock = session.getLock().writeLock();
+        writeLock.lock();
+        try {
             if (session.getState() != null && !session.getState().getCompleted().get()) {
                 throw new IllegalStateException("Previous question doesn't completed");
             }
-            Question question = session.getQuestionQueue().poll();
+            Question question = Objects.requireNonNull(session.getQuestionQueue().poll(), "No more questions");
             Integer questionNumber = session.getQuestionsCount() - session.getQuestionQueue().size();
             GameState state = new GameState(question, questionNumber, new ConcurrentHashMap<>());
             session.setState(state);
-            return null;
-            // TODO websocket
-        });
+        } finally {
+            writeLock.unlock();
+        }
+        // TODO websocket
     }
 
     public GameState endQuestion(String sessionId) {
-        return doWithLock(() -> {
-            GameSession session = gameSessionStorage.getSession(sessionId);
+        GameSession session = gameSessionStorage.getSession(sessionId);
+        Lock writeLock = session.getLock().writeLock();
+        writeLock.lock();
+        try {
             GameState state = session.getState();
+            if (state.getCompleted().get()) {
+                throw new IllegalStateException("Question already completed");
+            }
             session.getPlayersAnswersHistory().add(Collections.unmodifiableMap(state.getPlayersAnswerMap()));
-            state.getCompleted().pull();
+            state.getCompleted().set(true);
             return state;
-            // TODO websocket
-        });
+        } finally {
+            writeLock.unlock();
+        }
+        // TODO websocket
     }
 
     public void closeSession(String sessionId) {
@@ -101,19 +115,6 @@ public class GameSessionService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Map<String, String> details = (Map<String, String>) authentication.getDetails();
         return details.get("playerId");
-    }
-
-    @SneakyThrows
-    private <T> T doWithLock(Callable<T> action) {
-        if (lock.tryLock()) {
-            try {
-                return action.call();
-            } finally {
-                lock.unlock();
-            }
-        } else {
-            throw new IllegalStateException("Method was invoked at illegal moment");
-        }
     }
 
 }

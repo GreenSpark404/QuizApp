@@ -64,7 +64,7 @@ public class AuthenticationController {
         Player player = new Player(UUID.randomUUID().toString());
         player.setName(playerDTO.getName());
         var authenticationToken = new UsernamePasswordAuthenticationToken(player.getName(), null,
-                Stream.of(Roles.PLAYER.name()).map(SimpleGrantedAuthority::new).toList()
+                Stream.of("ROLE_" + Roles.PLAYER.name()).map(SimpleGrantedAuthority::new).toList()
         );
         authenticationToken.setDetails(
                 Map.of(
