@@ -1,6 +1,6 @@
 package org.greenspark404.mapper;
 
-import org.greenspark404.model.GameSession;
+import org.greenspark404.model.domain.GameSession;
 import org.greenspark404.model.dto.GameSessionDTO;
 import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;

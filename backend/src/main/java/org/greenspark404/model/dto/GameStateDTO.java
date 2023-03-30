@@ -8,4 +8,5 @@ public class GameStateDTO {
     private Integer questionNumber;
     private Integer answersCount;
     private Integer correctAnswersCount;
+    private Boolean completed;
 }

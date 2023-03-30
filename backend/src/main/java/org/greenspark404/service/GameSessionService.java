@@ -3,9 +3,9 @@ package org.greenspark404.service;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.greenspark404.component.GameSessionStorage;
-import org.greenspark404.model.GameSession;
-import org.greenspark404.model.GameState;
-import org.greenspark404.model.Player;
+import org.greenspark404.model.domain.GameSession;
+import org.greenspark404.model.domain.GameState;
+import org.greenspark404.model.domain.Player;
 import org.greenspark404.model.entity.Question;
 import org.greenspark404.model.entity.Quiz;
 import org.springframework.security.core.Authentication;
@@ -69,6 +69,9 @@ public class GameSessionService {
     public void nextQuestion(String sessionId) {
         doWithLock(() -> {
             GameSession session = gameSessionStorage.getSession(sessionId);
+            if (session.getState() != null && !session.getState().getCompleted().get()) {
+                throw new IllegalStateException("Previous question doesn't completed");
+            }
             Question question = session.getQuestionQueue().poll();
             Integer questionNumber = session.getQuestionsCount() - session.getQuestionQueue().size();
             GameState state = new GameState(question, questionNumber, new ConcurrentHashMap<>());
@@ -82,8 +85,8 @@ public class GameSessionService {
         return doWithLock(() -> {
             GameSession session = gameSessionStorage.getSession(sessionId);
             GameState state = session.getState();
-            session.setState(null);
             session.getPlayersAnswersHistory().add(Collections.unmodifiableMap(state.getPlayersAnswerMap()));
+            state.getCompleted().pull();
             return state;
             // TODO websocket
         });

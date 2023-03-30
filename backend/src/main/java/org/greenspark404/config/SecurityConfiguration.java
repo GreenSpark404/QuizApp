@@ -1,7 +1,7 @@
 package org.greenspark404.config;
 
 import org.greenspark404.jwt.JwtRequestFilter;
-import org.greenspark404.model.Roles;
+import org.greenspark404.model.domain.Roles;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;

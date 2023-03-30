@@ -1,4 +1,4 @@
-package org.greenspark404.model;
+package org.greenspark404.model.domain;
 
 import lombok.Data;
 import org.greenspark404.model.entity.Question;

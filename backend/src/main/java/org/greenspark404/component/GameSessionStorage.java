@@ -1,7 +1,7 @@
 package org.greenspark404.component;
 
 import lombok.RequiredArgsConstructor;
-import org.greenspark404.model.GameSession;
+import org.greenspark404.model.domain.GameSession;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
