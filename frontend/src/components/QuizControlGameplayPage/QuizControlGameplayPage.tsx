@@ -25,7 +25,9 @@ const QuizControlGameplayPage: React.FC<QuizControlGameplayPageProps> = ({}) => 
 
     const navigate = useNavigate();
 
-    useSubscription("/dev", (message) => setLastMessage(message.body));
+    useSubscription(`/gm/sessionUpdated/${id}`, (message) => setLastMessage(message.body));
+
+    console.log(lastMessage);
 
     const closeSessionHandler = (): void => {
         destroySession(id);
@@ -34,17 +36,17 @@ const QuizControlGameplayPage: React.FC<QuizControlGameplayPageProps> = ({}) => 
 
     const startNextQuestionHandler = async (): Promise<void> => {
         await startNextQuestion(id);
-        getCurrentSession(id)
+        getCurrentSession(id);
     };
 
     const endQuestionHandler = async (): Promise<void> => {
         await endQuestion(id);
-        getCurrentSession(id)
+        getCurrentSession(id);
     };
 
     useEffect(() => {
         getCurrentSession(id)
-    }, [lastMessage])
+    }, [])
 
     const isDisabledNextQuestionButton = !!sessionDTO.state && sessionDTO.questionsCount === sessionDTO.state?.questionNumber;
 
@@ -72,7 +74,6 @@ const QuizControlGameplayPage: React.FC<QuizControlGameplayPageProps> = ({}) => 
                     Закрыть сессию
                 </Button>
             </div>
-            {lastMessage}
             <Paper elevation={3} className={classes.sessionInfoWrapper}>
                 <div className={classes.quizNameWrapper}>
                     <Typography variant="h6">{sessionDTO.quizName}</Typography>
