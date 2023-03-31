@@ -4,6 +4,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.greenspark404.component.GameSessionStorage;
 import org.greenspark404.jwt.JwtConstants;
 import org.greenspark404.jwt.JwtTokenProvider;
 import org.greenspark404.model.domain.GameSession;
@@ -11,7 +12,7 @@ import org.greenspark404.model.domain.Player;
 import org.greenspark404.model.domain.Roles;
 import org.greenspark404.model.dto.AuthDTO;
 import org.greenspark404.model.dto.PlayerDTO;
-import org.greenspark404.component.GameSessionStorage;
+import org.greenspark404.service.WebSocketService;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -38,6 +39,7 @@ public class AuthenticationController {
     private final AuthenticationProvider authenticationProvider;
     private final JwtTokenProvider tokenProvider;
     private final GameSessionStorage gameSessionStorage;
+    private final WebSocketService webSocketService;
 
     @PostMapping("login")
     public void login(@RequestBody AuthDTO credential, HttpServletResponse response) throws IOException {
@@ -76,6 +78,7 @@ public class AuthenticationController {
         response.addCookie(authCookie);
         session.getPlayerMap().put(player.getId(), player);
         session.getScoreboardMap().put(player, 0);
+        webSocketService.notifyGmSessionUpdated(session);
     }
 
 }

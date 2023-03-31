@@ -25,6 +25,7 @@ import java.util.concurrent.locks.Lock;
 @RequiredArgsConstructor
 public class GameSessionService {
     private final GameSessionStorage gameSessionStorage;
+    private final WebSocketService webSocketService;
 
     public GameSession startSession(Quiz quiz) {
         GameSession session = gameSessionStorage.startSession(UUID.randomUUID().toString());
@@ -58,13 +59,20 @@ public class GameSessionService {
                 throw new IllegalStateException("Question already completed");
             }
             Player player = Objects.requireNonNull(session.getPlayerMap().get(ejectPlayerId()));
-            state.getPlayersAnswerMap().put(player, answer);
+            //noinspection SynchronizationOnLocalVariableOrMethodParameter
+            synchronized (player) {
+                if (state.getPlayersAnswerMap().containsKey(player)) {
+                    throw new IllegalStateException("Player already answered");
+                }
+                state.getPlayersAnswerMap().put(player, answer);
+            }
             boolean isCorrect = Objects.equals(state.getQuestion().getCorrectAnswer(), answer);
             if (isCorrect) {
                 int pos = state.getCorrectAnswersCount().getAndIncrement();
                 int points = 5 + Math.max((5 - pos), 0);
                 session.getScoreboardMap().computeIfPresent(player, (k, v) -> v + points);
             }
+            webSocketService.notifyGmSessionUpdated(session);
         } finally {
             readLock.unlock();
         }
@@ -82,10 +90,10 @@ public class GameSessionService {
             Integer questionNumber = session.getQuestionsCount() - session.getQuestionQueue().size();
             GameState state = new GameState(question, questionNumber, new ConcurrentHashMap<>());
             session.setState(state);
+            // TODO websocket
         } finally {
             writeLock.unlock();
         }
-        // TODO websocket
     }
 
     public GameState endQuestion(String sessionId) {
