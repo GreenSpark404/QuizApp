@@ -166,7 +166,7 @@ const QuizCreatePage: React.FC = () => {
                     className={classes.questionTextField}
                     value={question}
                     variant="outlined"
-                    placeholder="Вопрос"
+                    label="Вопрос"
                     fullWidth
                     onChange={e => addQuestionText(e)}
                 />

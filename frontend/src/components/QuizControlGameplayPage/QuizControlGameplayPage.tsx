@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 import classes from './QuizControlGameplayPage.module.scss';
 import Header from '../common/Header';
@@ -21,13 +21,11 @@ const QuizControlGameplayPage: React.FC<QuizControlGameplayPageProps> = ({}) => 
     const [lastMessage, setLastMessage] = useState<string>("");
 
     const params = { params: useParams() };
-    const id = params.params['*']!!;
+    const id = params.params['*']!;
 
     const navigate = useNavigate();
 
     useSubscription(`/gm/sessionUpdated/${id}`, (message) => setLastMessage(message.body));
-
-    console.log(lastMessage);
 
     const closeSessionHandler = (): void => {
         destroySession(id);
@@ -46,7 +44,7 @@ const QuizControlGameplayPage: React.FC<QuizControlGameplayPageProps> = ({}) => 
 
     useEffect(() => {
         getCurrentSession(id)
-    }, [])
+    }, [lastMessage])
 
     const isDisabledNextQuestionButton = !!sessionDTO.state && sessionDTO.questionsCount === sessionDTO.state?.questionNumber;
 
@@ -80,11 +78,38 @@ const QuizControlGameplayPage: React.FC<QuizControlGameplayPageProps> = ({}) => 
                     <Typography className={classes.playersCount}>Кол-во игроков: {sessionDTO.totalPlayers}</Typography>
                 </div>
                 {(!!sessionDTO.state && sessionDTO.state?.answersCount !== 0) &&
-                    <Typography>Всего ответили:&nbsp;
-                        <span style={{color: sessionDTO.state?.correctAnswersCount !== 0 ? "green" : "#000000de"}}>
-                            {sessionDTO.state?.correctAnswersCount}
-                        </span> / {sessionDTO.state?.answersCount}
-                    </Typography>
+                    <Accordion className={classes.accordion}>
+                        <AccordionSummary
+                            expandIcon={<ExpandMoreIcon />}
+                        >
+                            <div className={classes.accordionHeader}>
+                                <Typography>Всего ответили:&nbsp;
+                                    <span style={{color: sessionDTO.state?.correctAnswersCount !== 0 ? "green" : "#000000de"}}>
+                                        {sessionDTO.state?.correctAnswersCount}
+                                    </span> / {sessionDTO.state?.answersCount}
+                                </Typography>
+                            </div>
+                        </AccordionSummary>
+                        <AccordionDetails className={classes.accordionDetails}>
+                            <Typography>
+                                <ul>
+                                    {
+                                        Object.entries(sessionDTO.scoreboardMap)
+                                            .sort(([keyA, valueA], [keyB, valueB]) => valueB - valueA)
+                                            .map(([key, value], index) => {
+                                                return (
+                                                    <li>
+                                                        <div style={{color: index === 0 ? "green" : "black"}}>
+                                                            {`${key}: ${value}`}
+                                                        </div>
+                                                    </li>
+                                                )
+                                            })
+                                    }
+                                </ul>
+                            </Typography>
+                        </AccordionDetails>
+                    </Accordion>
                 }
                 {!!sessionDTO.state &&
                     <Accordion className={classes.accordion}>

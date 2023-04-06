@@ -45,17 +45,15 @@
     .questionFormWrapper {
 
       .chooseCorrect {
+        padding: 15px 15px 0px 15px;
         display: flex;
         flex-direction: row;
         gap: 15px;
-        margin-bottom: 10px;
-      }
-
-      .questionTextField {
-        margin-bottom: 20px;
       }
 
       .answerWrapper {
+
+        padding: 15px;
 
         .answerItem {
           margin-bottom: 15px;
