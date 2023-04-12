@@ -45,7 +45,7 @@ const service = {
     },
 
     regPlayer(sessionId: string, player: object) {
-        return axios.post(`http://localhost:8080/api/auth/${sessionId}/register`, player)
+        return axios.post(`http://localhost:8080/api/auth/${sessionId}/register`, player, { withCredentials: true })
             .then((response) => response.data);
     },
 
@@ -65,6 +65,13 @@ const service = {
 
     getCurrentSession(sessionId: string) {
         return axios.get(`http://localhost:8080/api/gm/${sessionId}/session`, {
+            withCredentials: true
+        })
+            .then((response) => response.data);
+    },
+
+    getCurrentQuestion(sessionId: string) {
+        return axios.get(`http://localhost:8080/api/game/${sessionId}/currentQuestion`, {
             withCredentials: true
         })
             .then((response) => response.data);

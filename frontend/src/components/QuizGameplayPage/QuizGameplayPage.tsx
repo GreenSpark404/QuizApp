@@ -2,11 +2,12 @@ import React, { useEffect, useState } from 'react';
 
 import classes from './QuizGameplayPage.module.scss';
 import Header from '../common/Header';
-import { useLocation, useParams, useNavigate } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import Typography from '@material-ui/core/Typography';
 import { TextField } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import quizStore from '../../stores/quizStore';
+import QuestionsAndAnswersPage from './QuestionsAndAnswersPage';
 
 type QuizGameplayPageProps = {};
 
@@ -23,7 +24,6 @@ const QuizGameplayPage: React.FC<QuizGameplayPageProps> = ({}) => {
         setSessionId(params.params['*']!!)
     }, [location.pathname])
 
-    //console.log(isPlayerAuth);
     const playerLoginHandler = (): void => {
         quizStore.regPlayer(sessionId, playerLogin).then(() => {
             setIsPlayerAuth(true)
@@ -70,7 +70,7 @@ const QuizGameplayPage: React.FC<QuizGameplayPageProps> = ({}) => {
     <div className={classes.component}>
       <Header />
         {!isPlayerAuth ?
-            regPlayerSection() : <div>зареган</div>
+            regPlayerSection() : <QuestionsAndAnswersPage sessionId={sessionId} />
         }
     </div>
   );
