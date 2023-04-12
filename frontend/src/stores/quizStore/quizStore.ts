@@ -108,11 +108,7 @@ class QuizStore {
             name: name
         }
         try {
-            const data = await service.regPlayer(sessionId, player);
-            console.log(data);
-            // runInAction(() => {
-            //     this.idSession = idSession;
-            // });
+            await service.regPlayer(sessionId, player);
         } catch (e) {
             console.log(e)
         }
