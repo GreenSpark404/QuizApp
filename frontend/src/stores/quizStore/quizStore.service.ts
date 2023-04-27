@@ -76,5 +76,12 @@ const service = {
         })
             .then((response) => response.data);
     },
+
+    answerTheQuestion(sessionId: string, answer: string) {
+        return axios.post(`http://localhost:8080/api/game/${sessionId}/answer?answer=${answer}`, null, {
+            withCredentials: true
+        })
+            .then((response) => response.data);
+    },
 }
 export default service

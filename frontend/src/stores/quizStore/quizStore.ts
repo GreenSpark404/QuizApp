@@ -42,6 +42,7 @@ class QuizStore {
             endQuestion: action.bound,
             getCurrentQuestion: action.bound,
             currentQuestion: observable,
+            answerTheQuestion: action.bound,
         });
     }
 
@@ -155,6 +156,15 @@ class QuizStore {
             runInAction(() => {
                 this.currentQuestion = currentQuestion;
             })
+        } catch (e) {
+            console.log(e)
+        }
+    }
+
+    async answerTheQuestion(sessionId: string, answer: string): Promise<void> {
+        try {
+            const data = await service.answerTheQuestion(sessionId, answer);
+            console.log(data);
         } catch (e) {
             console.log(e)
         }
